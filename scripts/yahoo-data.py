@@ -1,6 +1,6 @@
 import yfinance as yf
 
-tick = yf.Ticker("VTIP")
+tick = yf.Ticker("VGLT")
 
 # get historical market data
 hist = tick.history(period="max")

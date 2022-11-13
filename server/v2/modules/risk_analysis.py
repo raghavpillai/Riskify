@@ -17,18 +17,14 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
-top_10_portfolio_type = {
-    "ultra_aggressive" : [
-        "apple",
-        "microsoft",
-        "amazon",
-        "us dollar",
-        "taiwan semiconductor manufacturing",
-        "tencent",
-        "first horizon corporation",
-        "tesla",
-        "vanguard",
-        "american tower corporation"
+top_holdings = {
+    "ultra_aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.25"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.25"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
     ],
     "moderately_aggressive": [
         ["Vanguard 500 Index Fund ETF", "0.25"],
@@ -223,10 +219,19 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
         print(response.json())
         risk = 0.026584279145694695
 
-    #db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
-    #db.commit()
+    # db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
+    # db.commit()
 
-    score = risk
+    obj = {
+        "ultra_aggressive": 0.7,
+        "moderately_aggressive": 0.55,
+        "moderate": 0.4,
+        "moderately_conservative": 0.325,
+        "conservative": 0.1,
+        "ultra_conservative": 0,
+    }
+
+    score = risk + obj[portfolio_type]
     return {portfolio_type: score}
 
 
@@ -283,7 +288,7 @@ def get_portfolio_value_x_year(portfolio):
 
     file.close()
     # points = get_points(projected_portfolio_value)
-    #print(points)
+    # print(points)
     projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 

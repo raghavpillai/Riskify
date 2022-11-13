@@ -2,11 +2,13 @@ import json
 import os
 from flask import Flask, request
 from flask import jsonify
+from modules.monte_carlo_script import get_monte_carlo_preds
 
 app = Flask(__name__)
 
 historical_data = {}
-predictions_data = {}
+predictions_data = get_monte_carlo_preds()
+print(predictions_data)
 ticker_categories = {
     "gold": ["SGOL"],
     "real_estate": ["VNQ"],
@@ -48,19 +50,16 @@ def get_historical_data():
 
 @app.get("/prediction")
 def get_prediction_data():
+    print(predictions_data)
     body = request.json
     if "ticker" not in body:
         return jsonify({"msg": "Ticker must be passed."}), 400
 
     ticker = body["ticker"].lower()
-    if ticker in predictions_data:
-        return jsonify(predictions_data[ticker]), 200
+    if ticker not in predictions_data:
+        return jsonify({"msg": "Ticker not found."}), 400
 
-    data_file = os.path.join(file_dir, f"../../data_vars_monte_carlo.json")
-    with open(data_file, "r") as f:
-        data = json.load(f)
-        predictions_data[ticker] = data[ticker]
-        return jsonify(predictions_data[ticker]), 200
+    return jsonify(predictions_data[ticker]), 200
 
 
 app.run(debug=True)

@@ -4,6 +4,7 @@ import random
 import os
 from sqlitedict import SqliteDict
 from modules.model import get_points
+from modules.news_articles import get_news_articles
 
 #db = SqliteDict("risk_analysis.sqlite")
 
@@ -16,18 +17,23 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
-top_10_portfolio_type = {
-    "ultra_aggressive" : [
-        "apple",
-        "microsoft",
-        "amazon",
-        "us dollar",
-        "taiwan semiconductor manufacturing",
-        "tencent",
-        "first horizon corporation",
-        "tesla",
-        "vanguard",
-        "american tower corporation"
+top_holdings = {
+    "ultra_aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.25"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.25"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+    ],
+    "aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.2"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.2"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.1"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.1"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.1"],
     ],
     "moderately_aggressive": [
         ["Vanguard 500 Index Fund ETF", "0.25"],
@@ -241,7 +247,7 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
         "ultra_conservative": 0,
     }
     
-    score = risk
+    score = risk + obj[portfolio_type]
     return {portfolio_type: score}
 
 
@@ -295,12 +301,10 @@ def get_portfolio_value_x_year(portfolio):
             
         
         ind_graphs[ticker][0] = p_v
-        print(ticker)
-        print(ind_graphs[ticker])
         get_points(ind_graphs[ticker])
         
     file.close()
-    @points = get_points(projected_portfolio_value)
+    #points = get_points(projected_portfolio_value)
     #print(points)
     projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
@@ -308,6 +312,10 @@ def get_portfolio_value_x_year(portfolio):
 
 def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
     balances = {}
+    portfolio = get_risk_for_portfolio_helper(capital, portfolio_type, payload)
+    keys = portfolio.keys()
+    articles = get_news_articles(list(keys))
+    print(articles)
 
     if has_portfolio == "true":
         balances = payload["balances"]
@@ -325,5 +333,6 @@ def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
         "future_points": get_portfolio_value_x_year(
             get_risk_for_portfolio_helper(capital, portfolio_type, payload)
         ),
+        "articles": articles,
         "balancing": balances,
     }

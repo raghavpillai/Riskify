@@ -1,6 +1,6 @@
 import yfinance as yf
 import random
-
+import math
 dic = {
     "VOO": ["Index Fund ETF", "Index Fund"],
     "VEA": ["Markets Index Fund ETF", "Market Fund"],
@@ -19,13 +19,15 @@ dic = {
 }
 
 def get_news_articles(holdings_arr):
-    amount_of_articles = int(10 / len(holdings_arr))
+    amount_of_articles = int(math.ceil(10 / len(holdings_arr)))
     articles = []
-    
+
     for index, holding in enumerate(holdings_arr):
         if index == len(holdings_arr) - 1:
             amount_of_articles += (10 % amount_of_articles)
-        for news in random.sample(yf.Ticker(dic[holding][0]).news, amount_of_articles):
+        
+        articlez = yf.Ticker(dic[holding][0]).news
+        for news in random.sample(articlez, min(amount_of_articles, len(articlez))):
             article = {}
             article["title"] = news["title"]
             article["link"] = news["link"]
@@ -36,9 +38,4 @@ def get_news_articles(holdings_arr):
             except:
                 article["image"] = "https://s.yimg.com/uu/api/res/1.2/4JDV5cR1_5K7EMvoXVo7yg--~B/Zmk9ZmlsbDtoPTE0MDtweW9mZj0wO3c9MTQwO2FwcGlkPXl0YWNoeW9u/https://media.zenfs.com/en/simply_wall_st__316/f99e03d6864d27459bdfbebc0a8e18a3"
             articles.append(article)
-
     return articles[:10]
-
-
-articles = get_news_articles(['VOO', 'IVOV', 'VNQ'])
-print(articles)

@@ -5,21 +5,14 @@ from flask import jsonify
 from modules.risk_analysis import (
     return_analyzed_data,
     get_return_for_portfolio,
+    ticker_categories
 )
 
 app = Flask(__name__)
 
 historical_data = {}
 predictions_data_cache = {}
-ticker_categories = {
-    "gold": ["SGOL"],
-    "real_estate": ["VNQ"],
-    "stocks": ["IVOV", "VEA", "VIOV", "VOO", "VT", "VTI", "VWO"],
-    "treasury": {"bond": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
-}
-
 file_dir = os.path.dirname(os.path.realpath("__file__"))
-
 
 @app.get("/")
 def index():
@@ -78,13 +71,8 @@ def get_risk_analysis():
     capital = body["data"]["capital"]
     portfolio_type = body["data"]["balance"]
 
-    if has_portfolio == "false":
-        data = return_analyzed_data(capital, portfolio_type)
-        return jsonify(data), 200
-    else:
-        pass
-    
-
+    data = return_analyzed_data(capital, portfolio_type, body["data"])
+    return jsonify(data), 200
 
 @app.get("/return")
 def get_return_analysis():

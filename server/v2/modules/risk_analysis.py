@@ -7,6 +7,12 @@ db = SqliteDict("risk_analysis.sqlite")
 
 file_dir = os.path.dirname(os.path.realpath("__file__"))
 
+ticker_categories = {
+    "gold": ["SGOL"],
+    "real_estate": ["VNQ"],
+    "stocks": ["IVOV", "VEA", "VIOV", "VOO", "VT", "VTI", "VWO"],
+    "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
+}
 
 def process_file(file_name):
     values = []
@@ -18,7 +24,7 @@ def process_file(file_name):
     return values
 
 
-def get_risk_for_portfolio_helper(capital, portfolio_type):
+def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
     if portfolio_type == "ultra_aggressive":
         return {
             "VOO": capital * 0.25,
@@ -80,7 +86,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type):
             "VGIT": capital * 0.4,
             "SCHP": capital * 0.2,
         }
-    else:  # ultra_conservative
+    elif portfolio_type == "ultra_conservative":  # ultra_conservative
         return {
             "VT": capital * 0.1,
             "VIOV": capital * 0.03,
@@ -90,20 +96,41 @@ def get_risk_for_portfolio_helper(capital, portfolio_type):
             "VGSH": capital * 0.4,
             "VTIP": capital * 0.2,
         }
+    else: # Custom payload 
+        categories = {}
+        for stock in ticker_categories["stocks"]:
+            print(payload)
+            print(payload["stocks"])
+            categories[stock] = (payload["stocks"] * 0.01) * capital
+            print(categories[stock])
+        for stock in ticker_categories["treasury"]["bonds"]:
+            categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
+        for stock in ticker_categories["treasury"]["notes"]:
+            categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
+        #categories["capital"] = (payload["capitalWeight"] * 0.01) * capital
+        for stock in ticker_categories["real_estate"]:
+            categories[stock] = (payload["realEstate"] * 0.01) * capital
+        for stock in ticker_categories["gold"]:
+            categories[stock] = (payload["commodities"] * 0.01) * capital
+        print(categories)
+        return categories
+        
+        
 
 
-def future_portfolio_values(capital, portfolio_type):
+
+def future_portfolio_values(capital, portfolio_type, payload=None):
     return get_portfolio_value_x_year(
-        get_risk_for_portfolio_helper(capital, portfolio_type)
+        get_risk_for_portfolio_helper(capital, portfolio_type, payload)
     )
 
 
-def get_risk_for_portfolio(capital, portfolio_type):
+def get_risk_for_portfolio(capital, portfolio_type, payload=None):
     if db.get(f"{portfolio_type}_{capital}"):
         print("CACHE ACCESSED FOR RISK_ANALYSIS")
         return db[f"{portfolio_type}_{capital}"]
 
-    risks = future_portfolio_values(capital, portfolio_type)
+    risks = future_portfolio_values(capital, portfolio_type, payload)
     fields = {
         "alpha": 0.05,
         "portfolios": [{"portfolioValues": risks}],
@@ -179,12 +206,20 @@ def get_portfolio_value_x_year(portfolio):
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 
-def return_analyzed_data(capital, portfolio_type):
+def return_analyzed_data(capital, portfolio_type, payload=None):
+    balances = {}
+    if portfolio_type == "true":
+        capital_funds = (capital * payload["capitalWeight"] * 0.01)/4
+        balances["stocks"] = (capital * 0.25) - (capital * payload["stocks"] * 0.01) - capital_funds
+        balances["bonds_and_notes"] = (capital * 0.25) - (capital * payload["bonds_and_notes"] * 0.01) - capital_funds
+        balances["realEstate"] = (capital * 0.25) - (capital * payload["realEstate"] * 0.01) - capital_funds
+        balances["commodities"] = (capital * 0.25) - (capital * payload["commodities"] * 0.01) - capital_funds
     return {
-        "risk": get_risk_for_portfolio(capital, portfolio_type),
+        "risk": get_risk_for_portfolio(capital, portfolio_type, payload),
         "future_points": get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, portfolio_type)
-        )
+            get_risk_for_portfolio_helper(capital, portfolio_type, payload)
+        ),
+        "balancing": balances
     }
 
 # print(

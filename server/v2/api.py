@@ -10,9 +10,11 @@ from modules.risk_analysis import (
     ticker_categories,
     top_holdings,
 )
+from flask_ngrok2 import run_with_ngrok
 
 app = Flask(__name__)
 cors = CORS(app)
+run_with_ngrok(app, auth_token="5mjoacZcLSN3v4QdbpKcv_2aeYwXAxjgvjG8GT1aFS1")
 
 historical_data = {}
 predictions_data_cache = {}
@@ -73,8 +75,8 @@ def get_risk_analysis():
             400,
         )
     has_portfolio = body["portfolio"]
-    capital = body["data"]["capital"]
-    portfolio_type = body["data"]["balance"]
+    capital = int(body["data"]["capitalWeight"])
+    portfolio_type = body["balance"]
     if has_portfolio == "true":
         data = return_analyzed_data(
             capital, has_portfolio, "custom", body["data"]
@@ -113,4 +115,5 @@ def get_top_ten():
     return jsonify(top_holdings[category]), 200
 
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(port=5002)

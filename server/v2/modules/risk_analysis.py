@@ -5,7 +5,7 @@ import os
 from sqlitedict import SqliteDict
 from modules.model import get_points
 
-#db = SqliteDict("risk_analysis.sqlite")
+# db = SqliteDict("risk_analysis.sqlite")
 
 file_dir = os.path.dirname(os.path.realpath("__file__"))
 
@@ -16,18 +16,23 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
-top_10_portfolio_type = {
-    "ultra_aggressive" : [
-        "apple",
-        "microsoft",
-        "amazon",
-        "us dollar",
-        "taiwan semiconductor manufacturing",
-        "tencent",
-        "first horizon corporation",
-        "tesla",
-        "vanguard",
-        "american tower corporation"
+top_holdings = {
+    "ultra_aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.25"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.25"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+    ],
+    "aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.2"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.2"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.1"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.1"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.1"],
     ],
     "moderately_aggressive": [
         ["Vanguard 500 Index Fund ETF", "0.25"],
@@ -65,7 +70,10 @@ top_10_portfolio_type = {
         ["Vanguard S&P Small Cap 600 Value ETF", "0.05"],
         ["Vanguard Real Estate Index Fund ETF", "0.05"],
         ["Vanguard Intermediate-Term Treasury Index Fd ETF", "0.4"],
-        ["Schwab US TIPS ETF (Treasury Inflation-Protected Securities)", "0.2"],
+        [
+            "Schwab US TIPS ETF (Treasury Inflation-Protected Securities)",
+            "0.2",
+        ],
     ],
     "ultra_conservative": [
         ["Vanguard Total World Stock Index Fund ETF", "0.1"],
@@ -97,16 +105,21 @@ ticker_folders = {
 
 
 def process_file(ticker_name):
-    #if db.get(f"{ticker_name}_file"):
-        #print("CACHE ACCESSED FOR FILE OPEN")
-        #return db[f"{ticker_name}_file"]
+    # if db.get(f"{ticker_name}_file"):
+    # print("CACHE ACCESSED FOR FILE OPEN")
+    # return db[f"{ticker_name}_file"]
     values = []
-    file = open(os.path.join(file_dir, f"data_new/{ticker_folders[ticker_name]}/{ticker_name}_historical_data.json"))
+    file = open(
+        os.path.join(
+            file_dir,
+            f"data_new/{ticker_folders[ticker_name]}/{ticker_name}_historical_data.json",
+        )
+    )
     data = json.load(file)
     for i in data:
         values.append(float(data[i]["Close"]))
     file.close()
-    #db[f"{ticker_name}_file"] = values
+    # db[f"{ticker_name}_file"] = values
     return values
 
 
@@ -172,7 +185,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             "VGIT": capital * 0.4,
             "SCHP": capital * 0.2,
         }
-    elif portfolio_type == "ultra_conservative":  # ultra_conservative
+    else:  # portfolio_type == "ultra_conservative":  # ultra_conservative
         return {
             "VT": capital * 0.1,
             "VIOV": capital * 0.03,
@@ -182,22 +195,6 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             "VGSH": capital * 0.4,
             "VTIP": capital * 0.2,
         }
-    elif payload:  # Custom payload
-        categories = {}
-        for stock in ticker_categories["stocks"]:
-            categories[stock] = (payload["stocks"] * 0.01) * capital
-        for stock in ticker_categories["treasury"]["bonds"]:
-            categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
-        for stock in ticker_categories["treasury"]["notes"]:
-            categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
-        categories["capital"] = (payload["capitalWeight"] * 0.01) * capital
-        for stock in ticker_categories["real_estate"]:
-            categories[stock] = (payload["realEstate"] * 0.01) * capital
-        for stock in ticker_categories["gold"]:
-            categories[stock] = (payload["commodities"] * 0.01) * capital
-        return categories
-    else:
-        return {}
 
 
 def future_portfolio_values(capital, portfolio_type, payload=None):
@@ -207,9 +204,9 @@ def future_portfolio_values(capital, portfolio_type, payload=None):
 
 
 def get_risk_for_portfolio(capital, portfolio_type, payload=None):
-    #if db.get(f"{portfolio_type}_{capital}"):
-        #print("CACHE ACCESSED FOR RISK_ANALYSIS")
-        #return db[f"{portfolio_type}_{capital}"]
+    # if db.get(f"{portfolio_type}_{capital}"):
+    # print("CACHE ACCESSED FOR RISK_ANALYSIS")
+    # return db[f"{portfolio_type}_{capital}"]
 
     risks = future_portfolio_values(capital, portfolio_type, payload)
     fields = {
@@ -230,8 +227,8 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
         print(response.json())
         risk = 0.026584279145694695
 
-    #db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
-    #db.commit()
+    # db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
+    # db.commit()
     obj = {
         "ultra_aggressive": 0.7,
         "moderately_aggressive": 0.55,
@@ -240,14 +237,14 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
         "conservative": 0.1,
         "ultra_conservative": 0,
     }
-    
+
     score = risk
     return {portfolio_type: score}
 
 
 def get_return_for_portfolio(capital, portfolio_type):
 
-    #if db.get(f"{portfolio_type}_{capital}_return"):
+    # if db.get(f"{portfolio_type}_{capital}_return"):
     #    print("CACHE ACCESSED FOR RETURN_PORTFOLIO")
     #    return db[f"{portfolio_type}_{capital}_return"]
 
@@ -282,7 +279,7 @@ def get_portfolio_value_x_year(portfolio):
         ticker = ticker.lower()
         ind_graphs[ticker] = []
         # years 0-25 of the ticker
-        
+
         for i in range(0, len(data[ticker])):
             ratio_change = random.uniform(1.05, 0.98)
             ratio_change = sorted((0.98, ratio_change, 1.05))[1]
@@ -292,16 +289,15 @@ def get_portfolio_value_x_year(portfolio):
             ind_graphs[ticker].append(value)
             projected_portfolio_value[i] += value
             value = round(value * ratio_change, 2)
-            
-        
+
         ind_graphs[ticker][0] = p_v
         print(ticker)
         print(ind_graphs[ticker])
         get_points(ind_graphs[ticker])
-        
+
     file.close()
-    @points = get_points(projected_portfolio_value)
-    #print(points)
+    # @points = get_points(projected_portfolio_value)
+    # print(points)
     projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
@@ -310,15 +306,17 @@ def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
     balances = {}
 
     if has_portfolio == "true":
-        balances = payload["balances"]
-        capital_funds = capital * (payload["capitalWeight"] * 0.01)
-        balances["stocks"] = capital_funds * (payload["stocks"] * 0.01)
+        # balances = payload["balances"]
+        capital_funds = capital * (int(payload["capitalWeight"]) * 0.01)
+        balances["stocks"] = capital_funds * (int(payload["stocks"]) * 0.01)
         balances["bonds_and_notes"] = capital_funds * (
-            payload["bonds_and_notes"] * 0.01
+            int(payload["bonds_and_notes"]) * 0.01
         )
-        balances["realEstate"] = capital_funds * (payload["realEstate"] * 0.01)
+        balances["realEstate"] = capital_funds * (
+            int(payload["realEstate"]) * 0.01
+        )
         balances["commodities"] = capital_funds * (
-            payload["commodities"] * 0.01
+            int(payload["commodities"]) * 0.01
         )
     return {
         "risk": get_risk_for_portfolio(capital, portfolio_type, payload),

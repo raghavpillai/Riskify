@@ -6,67 +6,37 @@ from flask import jsonify
 app = Flask(__name__)
 
 historical_data = {}
+ticker_categories = {
+    "gold": ["SGOL"],
+    "real_estate": ["VNQ"],
+    "stocks": ["IVOV", "VEA", "VIOV", "VOO", "VT", "VTI", "VWO"],
+    "treasury": {"bond": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
+}
 
-file_dir = os.path.dirname(os.path.realpath('__file__'))
-
-@app.get("/historical/<string:ticker>")
-def get_historical_data(ticker):
-  file_name = os.path.join(file_dir, '../../data/same.txt')
-  f = open(f'{ticker.lower()}_.json')
-
-  # returns JSON object as a dictionary
-  data = json.load(f)
-
-  # Iterating through the json
-  # list
-  for i in data['emp_details']:
-      print(i)
-
-  # Closing file
-  f.close()
-
-    with open(f"data/market/{ticker.lower()}_historical_data.json", "r") as f:
-        historical_data = json.load(f)
-    return jsonify(historical_data)
+file_dir = os.path.dirname(os.path.realpath("__file__"))
 
 
-# @app.post("/item")
-# def create_item():
-#     request_data = request.get_json()
-#     new_item_id = uuid.uuid4().hex
-#     new_item = {
-#         "name": request_data["name"],
-#         "price": request_data["price"],
-#         "store_id": request_data["store_id"],
-#     }
-#     items[new_item_id] = new_item
-#     return new_item
+@app.get("/")
+def index():
+    return jsonify({"msg": "Hello World"})
 
 
-# @app.get("/item")
-# def get_all_items():
-#     return {"items": list(items.values())}
+@app.get("/historical/<string:category>/<string:ticker>")
+def get_historical_data(category, ticker):
+    if category not in ticker_categories:
+        return jsonify({"msg": "Invalid category passed."}), 400
+    if ticker in historical_data:
+        return jsonify(historical_data[ticker]), 200
+
+    if "_" in category:
+        category = category.replace("_", "/")
+
+    data_file = os.path.join(
+        file_dir, f"../../data/{category}/{ticker}_historical_data.json"
+    )
+    with open(data_file, "r") as f:
+        historical_data[ticker] = json.load(f)
+        return jsonify(historical_data[ticker]), 200
 
 
-# @app.get("/store/<string:id>")
-# def get_store(id):
-#     try:
-#         # Here you might also want to add the items in this store
-#         # We'll do that later on in the course
-#         return stores[id]
-#     except KeyError:
-#         return {"message": "Store not found"}, 404
-
-
-# @app.post("/store")
-# def create_store():
-#     request_data = request.get_json()
-#     new_store_id = uuid.uuid4().hex
-#     new_store = {"id": new_store_id, "name": request_data["name"]}
-#     stores[new_store_id] = new_store
-#     return new_store, 201
-
-
-# @app.get("/store")
-# def get_stores():
-#     return {"stores": list(stores.values())}
+app.run(debug=True)

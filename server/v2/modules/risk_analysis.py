@@ -3,7 +3,7 @@ import requests
 import random
 import os
 from sqlitedict import SqliteDict
-# from modules.model import get_points
+from modules.model import get_points
 
 #db = SqliteDict("risk_analysis.sqlite")
 
@@ -212,9 +212,6 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
         #return db[f"{portfolio_type}_{capital}"]
 
     risks = future_portfolio_values(capital, portfolio_type, payload)
-    print("-----------")
-    print(risks["total_graph"])
-    print("----------")
     fields = {
         "alpha": 0.05,
         "portfolios": [{"portfolioValues": risks["total_graph"]}],
@@ -235,6 +232,15 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
 
     #db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
     #db.commit()
+    obj = {
+        "ultra_aggressive": 0.7,
+        "moderately_aggressive": 0.55,
+        "moderate": 0.4,
+        "moderately_conservative": 0.325,
+        "conservative": 0.1,
+        "ultra_conservative": 0,
+    }
+    
     score = risk
     return {portfolio_type: score}
 
@@ -294,7 +300,7 @@ def get_portfolio_value_x_year(portfolio):
         get_points(ind_graphs[ticker])
         
     file.close()
-    #points = get_points(projected_portfolio_value)
+    @points = get_points(projected_portfolio_value)
     #print(points)
     projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}

@@ -13,7 +13,8 @@ Chart.register(LineController, LineElement, Filler, PointElement, LinearScale, T
 function LineChart05({
   data,
   width,
-  height
+  height,
+  ticker
 }) {
 
   const canvas = useRef(null);
@@ -31,22 +32,22 @@ function LineChart05({
         },
         scales: {
           y: {
-            beginAtZero: true,
+            beginAtZero: false,
             grid: {
               drawBorder: false,
             },
             ticks: {
-              maxTicksLimit: 7,
-              callback: (value) => `${value}%`,
+              maxTicksLimit: 25,
+              callback: (value) => `${value} $`,
             },
           },
           x: {
             type: 'time',
             time: {
-              parser: 'MM-DD-YYYY',
-              unit: 'month',
+              parser: 'YYYY',
+              unit: 'year',
               displayFormats: {
-                month: 'MMM YY',
+                month: 'YYYY',
               },
             },
             grid: {
@@ -66,7 +67,7 @@ function LineChart05({
           tooltip: {
             callbacks: {
               title: () => false, // Disable tooltip title
-              label: (context) => `${context.parsed.y}%`,
+              label: (context) => `${context.parsed.y} $`,
             },
           },
         },
@@ -141,10 +142,7 @@ function LineChart05({
       <div className="px-5 py-3">
         <div className="flex flex-wrap justify-between items-end">
           <div className="flex items-center">
-            <div className="text-3xl font-bold text-slate-800 mr-2">244.7%</div>
-            <div className="text-sm">
-              <span className="font-medium text-slate-800">17.4%</span> AVG
-            </div>
+            <div className="text-3xl font-bold text-slate-800 mr-2">{ticker}</div>
           </div>
           <div className="grow ml-2 mb-1">
             <ul ref={legend} className="flex flex-wrap justify-end" />

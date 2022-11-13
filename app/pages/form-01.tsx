@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'
 
 function Onboarding01() {
   let router= useRouter()
 
+  useEffect(() => {
+    if(JSON.parse(localStorage.getItem('obj') || '{}') != '{}'){
+      localStorage.clear()
+    }
+  },[])
+
   const handleClick = () => {
+    localStorage.clear()
     let form = document.getElementById('form') as HTMLFormElement;
     if((form.elements[0] as HTMLFormElement).checked === true ){
       router.push('/form-02?p=true')
@@ -85,7 +92,7 @@ function Onboarding01() {
                     </label>
                   </div>
                   <div className="flex items-center justify-between">
-                    <a className="btn bg-[#1ddccc] hover:bg-[#1ddcdccc] text-white ml-auto rounded-full p-2" onClick={handleClick}>Next Step -&gt;</a>
+                    <a className="btn bg-[#1ddccc] hover:bg-[#1ddcdccc] hover:cursor-pointer text-white ml-auto rounded-full p-2 pl-4 pr-4" onClick={handleClick}>Next Step -&gt;</a>
                   </div>
                 </form>
 

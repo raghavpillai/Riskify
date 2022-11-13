@@ -24,10 +24,10 @@ export default function Navbar() {
                 <a className='self-center' href="/">Riskify</a>
             </h1>
             <div className="flex flex-row basis-1/4 self-center pr-5 gap-5 lg:text-xl md:text-lg sm:text-md">
-                <h1 className="basis-1/2 text-center font-semibold text-white border-2 self-center rounded p-2 navitem">
+                <h1 className="basis-1/2 text-center font-semibold text-white border-2 border-[#777777] self-center rounded p-2 navitem">
                     <a href="/form-01">find risk</a>
                 </h1>
-                <h1 className="basis-1/2 text-center font-semibold text-white border-2 self-center rounded p-2 navitem">
+                <h1 className="basis-1/2 text-center font-semibold text-white border-2 border-[#777777] self-center rounded p-2 navitem">
                     <a href="/#about">about</a>
                 </h1>
             </div>

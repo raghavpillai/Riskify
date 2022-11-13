@@ -18,15 +18,32 @@ function Onboarding01() {
 
   const handleClick = () => {
     let form = document.getElementById('form') as HTMLFormElement;
-    console.log(form.elements)
 
-    if((form.elements[5] as HTMLFormElement).checked === true){
-        console.log('reroute to dashboard, rebalance = true')
+    const res = {
+      portfolio: "true",
+      data: {
+        stocks: (form.elements[0] as HTMLFormElement).value,
+        bonds_and_notes: (form.elements[1] as HTMLFormElement).value,
+        capitalWeight: (form.elements[2] as HTMLFormElement).value,
+        capitalValue: (form.elements[3] as HTMLFormElement).value,
+        realEstate: (form.elements[4] as HTMLFormElement).value,
+        commodities: (form.elements[5] as HTMLFormElement).value,
+      }
     }
+
+    localStorage.clear()
+    localStorage.setItem('obj', JSON.stringify(res));
+
     if((form.elements[6] as HTMLFormElement).checked === true){
-        console.log('reroute to dashboard, rebalance = false')
+      router.push('/form-03')
     }
-    // router.push('/form-03')
+    if((form.elements[7] as HTMLFormElement).checked === true){
+      let obj = JSON.parse(localStorage.getItem('obj') || '{}')
+      obj['balance'] = false
+      localStorage.setItem('obj', JSON.stringify(obj))
+      router.push('/dashboard')
+    }
+
   }
     
   return (
@@ -87,14 +104,20 @@ function Onboarding01() {
                     </label>
                     <label className="relative block cursor-pointer">
                       <div>
-                        <label className="block text-sm font-medium mb-1" htmlFor="company-name">Bonds<span className="text-rose-500">*</span></label>
+                        <label className="block text-sm font-medium mb-1" htmlFor="company-name">Bonds & Notes<span className="text-rose-500">*</span></label>
                         <input id="bonds" className="form-input w-full shadow-sm rounded focus:outline-none focus:border-2 focus:border-[#1ddcdc] p-[1rem]" type="text" />
                       </div>
                     </label>
                     <label className="relative block cursor-pointer">
                       <div>
-                        <label className="block text-sm font-medium mb-1" htmlFor="company-name">Cash & Capital <span className="text-rose-500">*</span></label>
-                        <input id="capital" className="form-input w-full shadow-sm rounded focus:outline-none focus:border-2 focus:border-[#1ddcdc] p-[1rem]" type="text" />
+                        <label className="block text-sm font-medium mb-1" htmlFor="company-name">Cash & Capital Weight<span className="text-rose-500">*</span></label>
+                        <input id="capital-weight" className="form-input w-full shadow-sm rounded focus:outline-none focus:border-2 focus:border-[#1ddcdc] p-[1rem]" type="text" />
+                      </div>
+                    </label>
+                    <label className="relative block cursor-pointer">
+                      <div>
+                        <label className="block text-sm font-medium mb-1" htmlFor="company-name">Cash & Capital Monetary Value<span className="text-rose-500">*</span></label>
+                        <input id="capital-amount" className="form-input w-full shadow-sm rounded focus:outline-none focus:border-2 focus:border-[#1ddcdc] p-[1rem]" type="text" />
                       </div>
                     </label>
                     <label className="relative block cursor-pointer">
@@ -135,7 +158,7 @@ function Onboarding01() {
                     </label>
                   </div>
                   <div className="flex items-center justify-between">
-                    <a className="btn bg-[#1ddccc] hover:bg-[#1ddcdccc] text-white ml-auto rounded-full p-2" onClick={handleClick}>Next Step -&gt;</a>
+                    <a className="btn bg-[#1ddccc] hover:bg-[#1ddcdccc] hover:cursor-pointer text-white ml-auto rounded-full p-2 pl-4 pr-4" onClick={handleClick}>Next Step -&gt;</a>
                   </div>
                 </form>
 

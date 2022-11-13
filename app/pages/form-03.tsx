@@ -11,15 +11,18 @@ function Onboarding01() {
 
   const handleClick = () => {
     let form = document.getElementById('form') as HTMLFormElement;
-    console.log(form.elements)
 
-    // if((form.elements[5] as HTMLFormElement).checked === true){
-    //     console.log('reroute to dashboard, rebalance = true')
-    // }
-    // if((form.elements[6] as HTMLFormElement).checked === true){
-    //     console.log('reroute to dashboard, rebalance = false')
-    // }
-    // router.push('/form-03')
+    let obj = JSON.parse(localStorage.getItem('obj') || '{}')
+    console.log(obj)
+
+    for(let i=0; i < form.elements.length; i++){
+      if((form.elements[i] as HTMLFormElement).checked === true){
+        obj['balance'] = (form.elements[i] as HTMLFormElement).id
+        break
+      }
+    }
+    localStorage.setItem('obj', JSON.stringify(obj))
+    router.push('/dashboard')
   }
     
   return (
@@ -72,49 +75,49 @@ function Onboarding01() {
                   <div className="space-y-3 mb-8">
                     <label className="block text-sm font-medium mb-1" htmlFor="company-name">Risk Tolerance<span className="text-rose-500">*</span></label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="ultraAggressive"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Ultra Aggressive</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="aggressive"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Aggressive</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="modAggressive"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Moderately Aggressive</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="moderate"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Moderate</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="modCons"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Moderately Conservative</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="cons"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Conservative</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="ultraCons"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Ultra Conservative</span>
                       </div>
@@ -122,7 +125,7 @@ function Onboarding01() {
                     </label>
                   </div>
                   <div className="flex items-center justify-between">
-                    <a className="btn bg-[#1ddccc] hover:bg-[#1ddcdccc] text-white ml-auto rounded-full p-2" onClick={handleClick}>Next Step -&gt;</a>
+                    <a className="btn bg-[#1ddccc] hover:bg-[#1ddcdccc] hover:cursor-pointer text-white ml-auto rounded-full p-2 pl-4 pr-4" onClick={handleClick}>Next Step -&gt;</a>
                   </div>
                 </form>
 

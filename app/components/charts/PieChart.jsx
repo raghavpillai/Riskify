@@ -52,6 +52,9 @@ function PieChart({
         {
           id: 'htmlLegend',
           afterUpdate(c, args, options) {
+            if(c.options.plugins.legend === undefined){
+              return
+            }
 
             const ul = legend.current;
             if (!ul) return;

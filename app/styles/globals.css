@@ -90,7 +90,6 @@ body {
 }
 
 .typewriter .typewriter-elements {
-  line-height: 1;
   height: 3rem;
   overflow: hidden;
 }
@@ -99,7 +98,7 @@ body {
   background-color: #efefef;
   top: 0;
   position: relative;
-  animation: slide 6s steps(3) infinite;
+  animation: slide 9s steps(3) infinite;
 }
 
 .typewriter-elements li span {
@@ -116,7 +115,7 @@ body {
   list-style: none;
   overflow: hidden;
   border-left: .15rem solid #1ddcdc;
-  animation: typing 2s steps(20) infinite;
+  animation: typing 3s steps(22) infinite;
 }
 
 @keyframes slide {
@@ -128,7 +127,7 @@ body {
 @keyframes typing {
   75%, 90% {
     left: 100%;
-    margin: 0 3rem 0 3rem;
+    margin: 0 3rem 0 1rem;
   }
 }
 

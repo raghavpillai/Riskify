@@ -9,7 +9,16 @@ function Form02f() {
 
   const handleClick = () => {
     let form = document.getElementById('form') as HTMLFormElement;
-    console.log(form.elements[0])
+    const res = {
+      portfolio: "false",
+      data: {
+        capitalValue: (form.elements[0] as HTMLFormElement).value,
+      }
+    }
+
+    localStorage.clear()
+    localStorage.setItem('obj', JSON.stringify(res));
+
     router.push('/form-03')
   }
     

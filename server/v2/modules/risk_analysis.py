@@ -1,5 +1,6 @@
 import json
 import requests
+import random
 import os
 from sqlitedict import SqliteDict
 # from modules.model import get_points
@@ -15,23 +16,18 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
-top_holdings = {
-    "ultra_aggressive": [
-        ["Vanguard 500 Index Fund ETF", "0.25"],
-        ["Vanguard Developed Markets Index Fund ETF", "0.25"],
-        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.25"],
-        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
-        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
-        ["Vanguard Real Estate Index Fund ETF", "0.05"],
-    ],
-    "aggressive": [
-        ["Vanguard 500 Index Fund ETF", "0.25"],
-        ["Vanguard Developed Markets Index Fund ETF", "0.2"],
-        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.2"],
-        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.1"],
-        ["Vanguard S&P Small Cap 600 Value ETF", "0.1"],
-        ["Vanguard Real Estate Index Fund ETF", "0.05"],
-        ["Vanguard Long-Term Treasury Index Fund ETF", "0.1"],
+top_10_portfolio_type = {
+    "ultra_aggressive" : [
+        "apple",
+        "microsoft",
+        "amazon",
+        "us dollar",
+        "taiwan semiconductor manufacturing",
+        "tencent",
+        "first horizon corporation",
+        "tesla",
+        "vanguard",
+        "american tower corporation"
     ],
     "moderately_aggressive": [
         ["Vanguard 500 Index Fund ETF", "0.25"],
@@ -82,14 +78,35 @@ top_holdings = {
     ],
 }
 
+ticker_folders = {
+    "sgol": "gold",
+    "vnq": "real_estate",
+    "ivov": "stocks",
+    "vea": "stocks",
+    "viov": "stocks",
+    "voo": "stocks",
+    "vt": "stocks",
+    "vti": "stocks",
+    "vwo": "stocks",
+    "schp": "treasury/bond",
+    "vglt": "treasury/bond",
+    "vgit": "treasury/notes",
+    "vgsh": "treasury/notes",
+    "vtip": "treasury/notes",
+}
 
-def process_file(file_name):
+
+def process_file(ticker_name):
+    if db.get(f"{ticker_name}_file"):
+        print("CACHE ACCESSED FOR FILE OPEN")
+        return db[f"{ticker_name}_file"]
     values = []
-    file = open(file_name)
+    file = open(os.path.join(file_dir, f"data_new/{ticker_folders[ticker_name]}/{ticker_name}_historical_data.json"))
     data = json.load(file)
     for i in data:
         values.append(float(data[i]["Close"]))
     file.close()
+    db[f"{ticker_name}_file"] = values
     return values
 
 
@@ -178,7 +195,6 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             categories[stock] = (payload["realEstate"] * 0.01) * capital
         for stock in ticker_categories["gold"]:
             categories[stock] = (payload["commodities"] * 0.01) * capital
-        print(categories)
         return categories
 
 
@@ -252,27 +268,35 @@ def get_portfolio_value_x_year(portfolio):
     projected_portfolio_value = [0] * 26
 
     ind_graphs = {}
+    p_v = 0
     for ticker, value in portfolio.items():
+        print(ticker)
+        print(value)
         ticker = ticker.lower()
         ind_graphs[ticker] = []
         # years 0-25 of the ticker
         for i in range(0, len(data[ticker])):
-            # finding mean_price at that year
-            mean_price = round(float(data[ticker][f"{i}"]["mean_price"]), 2)
-            # ratio change of this ticker, (future / now)
-
-            ratio_change = mean_price / round(
-                float(data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]),
-                2,
-            )
+            ratio_change = random.uniform(1.08, 0.98)
+            ratio_change = sorted((0.98, ratio_change, 1.2))[1]
+            if i == 0:
+                p_v = value
             # add this tickers new value to that year of the projected portfolio
-            ind_graphs[ticker].append(round(value * ratio_change, 2))
-            projected_portfolio_value[i] += round(value * ratio_change, 2)
-        ind_graphs[ticker].pop(1)
+            ind_graphs[ticker].append(value)
+            projected_portfolio_value[i] += value
+            value = round(value * ratio_change, 2)
+            #print(ratio_change)
+            print(value)
+        print("DONE------------")
+        #print(ind_graphs[ticker])
+        
+        #ind_graphs[ticker].pop(1)
+        ind_graphs[ticker][0] = p_v
+        return 0
     file.close()
-    # points = get_points(projected_portfolio_value)
-    # print(points)
+    points = get_points(projected_portfolio_value)
+    print(points)
     projected_portfolio_value.pop(1)
+    print(projected_portfolio_value)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 

@@ -71,7 +71,6 @@ def get_monte_carlo_preds():
         key_str = filename.split("_")[0]
         if key_str != 'vnq':
             continue
-        print(key_str)
         ret[key_str] = {}
         if os.path.isfile(f):
             values = []

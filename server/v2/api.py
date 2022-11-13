@@ -2,14 +2,18 @@ import json
 import os
 from flask import Flask, request
 from flask import jsonify
+from flask_cors import CORS, cross_origin
 from modules.risk_analysis import (
     return_analyzed_data,
     get_return_for_portfolio,
     get_risk_for_portfolio,
     ticker_categories,
+    top_holdings,
 )
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config["CORS_HEADERS"] = "Content-Type"
 
 historical_data = {}
 predictions_data_cache = {}
@@ -61,7 +65,8 @@ def get_prediction_data():
         return jsonify(predictions_data[ticker]), 200
 
 
-@app.get("/analytics")
+@app.post("/analytics")
+@cross_origin()
 def get_risk_analysis():
     body = request.json
     if "portfolio" not in body or "data" not in body:
@@ -87,6 +92,7 @@ def get_risk_analysis():
 @app.get("/return")
 def get_return_analysis():
     body = request.json
+    print(body)
     if "portfolio" not in body or "capital" not in body:
         return (
             jsonify({"msg": "Portfolio type or capital must be passed."}),
@@ -95,6 +101,19 @@ def get_return_analysis():
     type = body["portfolio"]
     capital = body["capital"]
     return jsonify(get_return_for_portfolio(capital, type)), 200
+
+
+@app.post("/top-holdings")
+@cross_origin()
+def get_top_ten():
+    body = request.json
+    print(body)
+    if "category" not in body:
+        return jsonify({"msg": "Category must be passed."}), 400
+    category = body["category"]
+    if category not in top_holdings.keys():
+        return jsonify({"msg": "Invalid category passed."}), 400
+    return jsonify(top_holdings[category]), 200
 
 
 app.run(debug=True)

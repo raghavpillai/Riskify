@@ -2,7 +2,7 @@ from keras import Model
 from keras.layers import Input, Dense, Bidirectional
 from keras.layers.recurrent import LSTM
 import numpy as np
- 
+
 def best_fit(X, Y):
 
     xbar = sum(X)/len(X)
@@ -25,12 +25,12 @@ def best_fit(X, Y):
 #         x_arr.append([x])
 #         y_arr.append([num])
 #         x += 1
-#     data = 
+#     data =
 
 #     x_a = np.array(x_arr).reshape(-1,1)
 #     y_a = np.array(y_arr).reshape(-1,1)
-    
-   
+
+
 # def define_model():
 #     input1 = Input(shape=(2,1)) #take the reshape last two values, see "data = np.reshape(data,(10,2,1))" which is "data/batch-size, row, column"
 #     lstm1 = Bidirectional(LSTM(units=32))(input1)

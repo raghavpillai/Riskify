@@ -2,7 +2,7 @@ import json
 import requests
 import os
 from sqlitedict import SqliteDict
-from modules.model import get_points
+# from modules.model import get_points
 
 db = SqliteDict("risk_analysis.sqlite")
 
@@ -15,91 +15,73 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
-top_10_portfolio_type = {
-    "ultra_aggressive" : [
-        "apple",
-        "microsoft",
-        "amazon",
-        "us dollar",
-        "taiwan semiconductor manufacturing",
-        "tencent",
-        "first horizon corporation",
-        "tesla",
-        "vanguard",
-        "american tower corporation"
+top_holdings = {
+    "ultra_aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.25"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.25"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
     ],
-    "agressive" : [
-        "apple",
-        "microsoft",
-        "us dollar",
-        "tencent",
-        "first horizon corporation",
-        "south jersey industries",
-        "vanguard",
-        "american tower corporation",
-        "treasury bond",
-        "prologis inc"
+    "aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.2"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.2"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.1"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.1"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.1"],
     ],
-    "moderately_aggressive" : [
-        "apple",
-        "microsoft",
-        "alibaba",
-        "tencent",
-        "alleghany corporation",
-        "south jersey industries",
-        "vanguard",
-        "american tower corporation",
-        "treasury bond",
-        "prologis inc"
+    "moderately_aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.15"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.15"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.2"],
     ],
-    "moderate" : [
-        "taiwan semiconductor manufacturing",
-        "microsoft",
-        "us dollar",
-        "tencent",
-        "first horizon corporation",
-        "south jersey industries",
-        "vanguard",
-        "american tower corporation",
-        "treasury bond",
-        "treasury note"
+    "moderate": [
+        ["Vanguard 500 Index Fund ETF", "0.15"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.15"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.15"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.1"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.1"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.2"],
+        ["Vanguard Intermediate-Term Treasury Index Fd ETF", "0.1"],
     ],
-    "moderately_conservative" : [
-        "apple",
-        "microsoft",
-        "us dollar",
-        "tencent",
-        "first horizon corporation",
-        "south jersey industries",
-        "vanguard",
-        "american tower corporation",
-        "treasury bond",
-        "treasury note"
+    "moderately_conservative": [
+        ["Vanguard 500 Index Fund ETF", "0.15"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.15"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.15"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.05"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.05"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.2"],
+        ["Vanguard Intermediate-Term Treasury Index Fd ETF", "0.2"],
     ],
-    "conservative" : [
-        "apple",
-        "microsoft",
-        "us dollar",
-        "crown castle inc",
-        "government of the united states of america",
-        "south jersey industries",
-        "vanguard",
-        "american tower corporation",
-        "treasury bond",
-        "treasury note"
+    "conservative": [
+        ["Vanguard Total Stock Market Index Fund ETF", "0.1"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.1"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.1"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.05"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Intermediate-Term Treasury Index Fd ETF", "0.4"],
+        ["Schwab US TIPS ETF (Treasury Inflation-Protected Securities)", "0.2"],
     ],
-    "ultra_conservative" : [
-        "amazon",
-        "alphabet",
-        "us dollar",
-        "crown castle inc",
-        "government of the united states of america",
-        "vanguard",
-        "american tower corporation",
-        "treasury bond",
-        "treasury note"
-    ]
+    "ultra_conservative": [
+        ["Vanguard Total World Stock Index Fund ETF", "0.1"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.03"],
+        ["Vanguard Real Estate Index Fund ETF", "0.02"],
+        ["abrdn Physical Gold Shares ETF", "0.05"],
+        ["Vanguard Intermediate-Term Treasury Index Fd ETF", "0.2"],
+        ["Vanguard Short-Term Treasury Index Fund ETF", "0.4"],
+        ["Vanguard Short-Term Inflation-Protected Sec Idx ETF", "0.2"],
+    ],
 }
+
 
 def process_file(file_name):
     values = []
@@ -191,7 +173,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
         for stock in ticker_categories["treasury"]["notes"]:
             categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
-        # categories["capital"] = (payload["capitalWeight"] * 0.01) * capital
+        categories["capital"] = (payload["capitalWeight"] * 0.01) * capital
         for stock in ticker_categories["real_estate"]:
             categories[stock] = (payload["realEstate"] * 0.01) * capital
         for stock in ticker_categories["gold"]:
@@ -288,8 +270,8 @@ def get_portfolio_value_x_year(portfolio):
             projected_portfolio_value[i] += round(value * ratio_change, 2)
         ind_graphs[ticker].pop(1)
     file.close()
-    points = get_points(projected_portfolio_value)
-    print(points)
+    # points = get_points(projected_portfolio_value)
+    # print(points)
     projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 

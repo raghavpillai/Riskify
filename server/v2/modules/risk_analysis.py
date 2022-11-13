@@ -114,9 +114,6 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             categories[stock] = (payload["commodities"] * 0.01) * capital
         print(categories)
         return categories
-        
-        
-
 
 
 def future_portfolio_values(capital, portfolio_type, payload=None):

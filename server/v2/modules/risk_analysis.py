@@ -2,6 +2,7 @@ import json
 import requests
 import os
 from sqlitedict import SqliteDict
+from modules.model import get_points
 
 db = SqliteDict("risk_analysis.sqlite")
 
@@ -203,6 +204,8 @@ def get_portfolio_value_x_year(portfolio):
             ind_graphs[ticker].append(round(value * ratio_change, 2))
             projected_portfolio_value[i] += round(value * ratio_change, 2)
     file.close()
+    points = get_points(projected_portfolio_value)
+    print(points)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 

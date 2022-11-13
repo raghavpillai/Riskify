@@ -18,7 +18,7 @@ def process_file(file_name):
 
 def get_risk_from_data(folder_name):
     if db.get(folder_name):
-        print("ACCESSED")
+        print("CACHE ACCESSED FOR RISK_ANALYSIS")
         return db[folder_name]
 
     goal_dir = os.path.join(os.getcwd(), f"data_new/{folder_name}/")

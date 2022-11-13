@@ -5,7 +5,7 @@ import os
 from sqlitedict import SqliteDict
 # from modules.model import get_points
 
-db = SqliteDict("risk_analysis.sqlite")
+#db = SqliteDict("risk_analysis.sqlite")
 
 file_dir = os.path.dirname(os.path.realpath("__file__"))
 
@@ -97,16 +97,16 @@ ticker_folders = {
 
 
 def process_file(ticker_name):
-    if db.get(f"{ticker_name}_file"):
-        print("CACHE ACCESSED FOR FILE OPEN")
-        return db[f"{ticker_name}_file"]
+    #if db.get(f"{ticker_name}_file"):
+        #print("CACHE ACCESSED FOR FILE OPEN")
+        #return db[f"{ticker_name}_file"]
     values = []
     file = open(os.path.join(file_dir, f"data_new/{ticker_folders[ticker_name]}/{ticker_name}_historical_data.json"))
     data = json.load(file)
     for i in data:
         values.append(float(data[i]["Close"]))
     file.close()
-    db[f"{ticker_name}_file"] = values
+    #db[f"{ticker_name}_file"] = values
     return values
 
 
@@ -182,7 +182,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             "VGSH": capital * 0.4,
             "VTIP": capital * 0.2,
         }
-    else:  # Custom payload
+    elif payload:  # Custom payload
         categories = {}
         for stock in ticker_categories["stocks"]:
             categories[stock] = (payload["stocks"] * 0.01) * capital
@@ -196,6 +196,8 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
         for stock in ticker_categories["gold"]:
             categories[stock] = (payload["commodities"] * 0.01) * capital
         return categories
+    else:
+        return {}
 
 
 def future_portfolio_values(capital, portfolio_type, payload=None):
@@ -205,14 +207,17 @@ def future_portfolio_values(capital, portfolio_type, payload=None):
 
 
 def get_risk_for_portfolio(capital, portfolio_type, payload=None):
-    if db.get(f"{portfolio_type}_{capital}"):
-        print("CACHE ACCESSED FOR RISK_ANALYSIS")
-        return db[f"{portfolio_type}_{capital}"]
+    #if db.get(f"{portfolio_type}_{capital}"):
+        #print("CACHE ACCESSED FOR RISK_ANALYSIS")
+        #return db[f"{portfolio_type}_{capital}"]
 
     risks = future_portfolio_values(capital, portfolio_type, payload)
+    print("-----------")
+    print(risks["total_graph"])
+    print("----------")
     fields = {
         "alpha": 0.05,
-        "portfolios": [{"portfolioValues": risks}],
+        "portfolios": [{"portfolioValues": risks["total_graph"]}],
     }
     response = requests.post(
         "https://api.portfoliooptimizer.io/v1/portfolio/analysis/conditional-value-at-risk",
@@ -224,19 +229,21 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
             response.json()["portfolios"][0]["portfolioConditionalValueAtRisk"]
         )
     except:
+        print("API CALLS HIT")
+        print(response.json())
         risk = 0.026584279145694695
 
-    db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
-    db.commit()
-
-    return {portfolio_type: risk}
+    #db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
+    #db.commit()
+    score = risk
+    return {portfolio_type: score}
 
 
 def get_return_for_portfolio(capital, portfolio_type):
 
-    if db.get(f"{portfolio_type}_{capital}_return"):
-        print("CACHE ACCESSED FOR RETURN_PORTFOLIO")
-        return db[f"{portfolio_type}_{capital}_return"]
+    #if db.get(f"{portfolio_type}_{capital}_return"):
+    #    print("CACHE ACCESSED FOR RETURN_PORTFOLIO")
+    #    return db[f"{portfolio_type}_{capital}_return"]
 
     returns = future_portfolio_values(capital, portfolio_type)
     fields = {
@@ -252,12 +259,8 @@ def get_return_for_portfolio(capital, portfolio_type):
             response.json()["portfolios"][0]["portfolioAverageReturn"]
         )
     except:
+        print("API CALLS HIT")
         arithmetic_return = 0.026584279145694695
-
-    db[f"{portfolio_type}_{capital}_return"] = {
-        portfolio_type: arithmetic_return
-    }
-    db.commit()
 
     return {portfolio_type: arithmetic_return}
 
@@ -270,38 +273,36 @@ def get_portfolio_value_x_year(portfolio):
     ind_graphs = {}
     p_v = 0
     for ticker, value in portfolio.items():
-        print(ticker)
-        print(value)
         ticker = ticker.lower()
         ind_graphs[ticker] = []
         # years 0-25 of the ticker
+        
         for i in range(0, len(data[ticker])):
-            ratio_change = random.uniform(1.08, 0.98)
-            ratio_change = sorted((0.98, ratio_change, 1.2))[1]
+            ratio_change = random.uniform(1.05, 0.98)
+            ratio_change = sorted((0.98, ratio_change, 1.05))[1]
             if i == 0:
                 p_v = value
             # add this tickers new value to that year of the projected portfolio
             ind_graphs[ticker].append(value)
             projected_portfolio_value[i] += value
             value = round(value * ratio_change, 2)
-            #print(ratio_change)
-            print(value)
-        print("DONE------------")
-        #print(ind_graphs[ticker])
+            
         
-        #ind_graphs[ticker].pop(1)
         ind_graphs[ticker][0] = p_v
-        return 0
+        print(ticker)
+        print(ind_graphs[ticker])
+        get_points(ind_graphs[ticker])
+        
     file.close()
-    points = get_points(projected_portfolio_value)
-    print(points)
+    #points = get_points(projected_portfolio_value)
+    #print(points)
     projected_portfolio_value.pop(1)
-    print(projected_portfolio_value)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 
 def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
     balances = {}
+
     if has_portfolio == "true":
         balances = payload["balances"]
         capital_funds = capital * (payload["capitalWeight"] * 0.01)
@@ -320,10 +321,3 @@ def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
         ),
         "balancing": balances,
     }
-
-
-# print(
-#     get_portfolio_value_x_year(
-#         get_risk_for_portfolio_helper(100_000, "aggressive")
-#     )
-# )

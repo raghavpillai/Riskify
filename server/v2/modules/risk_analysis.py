@@ -35,6 +35,15 @@ top_holdings = {
         ["Vanguard Real Estate Index Fund ETF", "0.05"],
         ["Vanguard Long-Term Treasury Index Fund ETF", "0.2"],
     ],
+    "aggressive": [
+        ["Vanguard 500 Index Fund ETF", "0.25"],
+        ["Vanguard Developed Markets Index Fund ETF", "0.15"],
+        ["Vanguard Emerging Markets Stock Index Fund ETF", "0.15"],
+        ["Vanguard S&P Mid-Cap 400 Value Index Fund ETF", "0.10"],
+        ["Vanguard S&P Small Cap 600 Value ETF", "0.10"],
+        ["Vanguard Real Estate Index Fund ETF", "0.05"],
+        ["Vanguard Long-Term Treasury Index Fund ETF", "0.2"],
+    ],
     "moderate": [
         ["Vanguard 500 Index Fund ETF", "0.15"],
         ["Vanguard Developed Markets Index Fund ETF", "0.15"],
@@ -221,18 +230,8 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
 
     #db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
     #db.commit()
-    obj = {
-        "ultra_aggressive": 0.7,
-        "aggressive": 0.61,
-        "moderately_aggressive": 0.55,
-        "moderate": 0.4,
-        "moderately_conservative": 0.325,
-        "conservative": 0.1,
-        "ultra_conservative": 0.05,
-        "custom": 0.225,
-    }
     
-    score = risk + obj[portfolio_type]
+    score = risk
     return {portfolio_type: score}
 
 

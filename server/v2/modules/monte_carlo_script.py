@@ -1,11 +1,8 @@
 import math
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import json
-import requests
 import os
-from datetime import datetime
 
 
 def get_pred_var(df, number_of_years, num_future):
@@ -78,8 +75,4 @@ def get_monte_carlo_preds():
             for i in range(1, 26):
                 ret[key_str][str(i)] = get_pred_var(df, 10, 250 * i)
             file.close()
-    # print(ret)
     return ret
-
-
-# get_monte_carlo_preds()

@@ -92,9 +92,9 @@ def get_risk_for_portfolio_helper(capital, portfolio_type):
 
 
 def get_risk_for_portfolio(capital, portfolio_type):
-    # if db.get(portfolio_type):
-    #     print("CACHE ACCESSED FOR RISK_ANALYSIS")
-    #     return db[portfolio_type]
+    if db.get(portfolio_type):
+        print("CACHE ACCESSED FOR RISK_ANALYSIS")
+        return db[portfolio_type]
 
     risks = get_risk_for_portfolio_helper(capital, portfolio_type)
     fields = {
@@ -118,3 +118,24 @@ def get_risk_for_portfolio(capital, portfolio_type):
     db.commit()
 
     return {portfolio_type: risk}
+
+def get_portfolio_value_x_year(portfolio, x_years):
+    file = open(os.path.join(os.getcwd(), "new_monte_carlo_wvnq.json"))
+    data = json.load(file)
+    # print(data.keys())
+    new_portfolio = {}
+    for ticker, value in portfolio.items():
+        ticker = ticker.lower()
+        ratio_change = data[ticker][str(int(x_years))]['mean_price'] / data[ticker]["1"]['mean_price']
+        new_portfolio[ticker] = value * ratio_change
+    print(new_portfolio)
+    return new_portfolio
+
+# get_risk_for_portfolio(100_000, "ultra_aggressive")
+# get_risk_for_portfolio(100_000, "aggressive")
+# get_risk_for_portfolio(100_000, "moderately_aggressive")
+# get_risk_for_portfolio(100_000, "moderate")
+# get_risk_for_portfolio(100_000, "moderately_conservative")
+# get_risk_for_portfolio(100_000, "conservative")
+# get_risk_for_portfolio(100_000, "ultra_conservative")
+get_portfolio_value_x_year(get_risk_for_portfolio_helper(100_000, "ultra_aggressive"), 24)

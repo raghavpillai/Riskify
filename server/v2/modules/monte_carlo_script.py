@@ -60,16 +60,19 @@ def get_pred_var(df, number_of_years, num_future):
 
 
 def get_monte_carlo_preds():
-    if db.get("carlo"):
-        print("CACHE ACCESSED FOR RISK_ANALYSIS")
-        return db["carlo"]
+    # if db.get("carlo"):
+    #     print("CACHE ACCESSED FOR RISK_ANALYSIS")
+    #     return db["carlo"]
 
-    goal_dir = os.path.join(os.getcwd(), "data_old/market/")
+    goal_dir = os.path.join("C:\\Users\\kanis\\Desktop\\hackutd\\server\\v2\\data_old\\market")
 
-    ret = {}
+    file = open(os.path.join(os.getcwd(), "new_monte_carlo.json"))
+    ret = json.load(file)
     for filename in os.listdir(goal_dir):
         f = os.path.join(goal_dir, filename)
         key_str = filename.split("_")[0]
+        if key_str != 'vnq':
+            continue
         print(key_str)
         ret[key_str] = {}
         if os.path.isfile(f):
@@ -84,7 +87,14 @@ def get_monte_carlo_preds():
                 ret[key_str][str(i)] = get_pred_var(df, 10, 250 * i)
             file.close()
 
-    db["carlo"] = ret
-    db.commit()
-    return ret
+    # Serializing json
+    json_object = json.dumps(ret, indent=4)
     
+    # Writing to sample.json
+    with open("new_monte_carlo_wvnq.json", "w") as outfile:
+        outfile.write(json_object)
+    # db["carlo"] = ret
+    # db.commit()
+    return ret
+
+get_monte_carlo_preds()

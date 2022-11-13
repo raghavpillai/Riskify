@@ -1,10 +1,8 @@
 import math
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import json
 import os
-from datetime import datetime
 from sqlitedict import SqliteDict
 db = SqliteDict("risk_analysis.sqlite")
 

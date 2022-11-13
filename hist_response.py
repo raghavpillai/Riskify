@@ -1,7 +1,6 @@
 import json
 import requests
 
-
 #Opening JSON file
 f = open('historical.json')
   

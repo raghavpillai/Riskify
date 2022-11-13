@@ -293,7 +293,6 @@ def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
     portfolio = get_risk_for_portfolio_helper(capital, portfolio_type, payload)
     keys = portfolio.keys()
     articles = get_news_articles(list(keys))
-    print(articles)
 
     if has_portfolio == "true":
         # balances = payload["balances"]

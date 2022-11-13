@@ -13,7 +13,6 @@ from modules.risk_analysis import (
 
 app = Flask(__name__)
 cors = CORS(app)
-app.config["CORS_HEADERS"] = "Content-Type"
 
 historical_data = {}
 predictions_data_cache = {}
@@ -66,7 +65,6 @@ def get_prediction_data():
 
 
 @app.post("/analytics")
-@cross_origin()
 def get_risk_analysis():
     body = request.json
     if "portfolio" not in body or "data" not in body:
@@ -104,7 +102,6 @@ def get_return_analysis():
 
 
 @app.post("/top-holdings")
-@cross_origin()
 def get_top_ten():
     body = request.json
     print(body)

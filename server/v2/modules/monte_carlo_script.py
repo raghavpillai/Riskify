@@ -1,8 +1,12 @@
 import math
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import json
 import os
+from datetime import datetime
+from sqlitedict import SqliteDict
+db = SqliteDict("risk_analysis.sqlite")
 
 
 def get_pred_var(df, number_of_years, num_future):
@@ -56,6 +60,10 @@ def get_pred_var(df, number_of_years, num_future):
 
 
 def get_monte_carlo_preds():
+    if db.get("carlo"):
+        print("CACHE ACCESSED FOR RISK_ANALYSIS")
+        return db["carlo"]
+
     goal_dir = os.path.join(os.getcwd(), "data_old/market/")
 
     ret = {}
@@ -75,4 +83,8 @@ def get_monte_carlo_preds():
             for i in range(1, 26):
                 ret[key_str][str(i)] = get_pred_var(df, 10, 250 * i)
             file.close()
+
+    db["carlo"] = ret
+    db.commit()
     return ret
+    

@@ -1,4 +1,5 @@
 import json
+import os
 from flask import Flask, request
 from flask import jsonify
 
@@ -6,12 +7,14 @@ app = Flask(__name__)
 
 historical_data = {}
 
+file_dir = os.path.dirname(os.path.realpath('__file__'))
+
 @app.get("/historical/<string:ticker>")
 def get_historical_data(ticker):
-  f = open(f'data.json')
+  file_name = os.path.join(file_dir, '../../data/same.txt')
+  f = open(f'{ticker.lower()}_.json')
 
-  # returns JSON object as
-  # a dictionary
+  # returns JSON object as a dictionary
   data = json.load(f)
 
   # Iterating through the json

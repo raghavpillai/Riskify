@@ -79,7 +79,7 @@ def get_risk_analysis():
     portfolio_type = body["balance"]
     if has_portfolio == "true":
         data = return_analyzed_data(
-            capital, has_portfolio, "custom", body["data"]
+            capital, has_portfolio, portfolio_type, body["data"]
         )
         return jsonify(data), 200
     else:

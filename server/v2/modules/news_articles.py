@@ -21,7 +21,7 @@ dic = {
 def get_news_articles(holdings_arr):
     amount_of_articles = int(10 / len(holdings_arr))
     articles = []
-
+    
     for index, holding in enumerate(holdings_arr):
         if index == len(holdings_arr) - 1:
             amount_of_articles += (10 % amount_of_articles)

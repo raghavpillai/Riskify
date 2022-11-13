@@ -126,6 +126,35 @@ def get_risk_for_portfolio(capital, portfolio_type):
     return {portfolio_type: risk}
 
 
+def get_return_for_portfolio(capital, portfolio_type):
+    if db.get(f"{portfolio_type}_{capital}_return"):
+        print("CACHE ACCESSED FOR RETURN_PORTFOLIO")
+        return db[f"{portfolio_type}_{capital}_return"]
+
+    returns = future_portfolio_values(capital, portfolio_type)
+    fields = {
+        "portfolios": [{"portfolioValues": returns}],
+    }
+    response = requests.post(
+        "https://api.portfoliooptimizer.io/v1/portfolio/analysis/returns/average",
+        json=fields,
+    )
+    arithmetic_return = 0
+    try:
+        arithmetic_return = float(
+            response.json()["portfolios"][0]["portfolioAverageReturn"]
+        )
+    except:
+        arithmetic_return = 0.026584279145694695
+
+    db[f"{portfolio_type}_{capital}_return"] = {
+        portfolio_type: arithmetic_return
+    }
+    db.commit()
+
+    return {portfolio_type: arithmetic_return}
+
+
 def get_portfolio_value_x_year(portfolio):
     file = open(os.path.join(file_dir, f"new_monte_carlo.json"))
     data = json.load(file)

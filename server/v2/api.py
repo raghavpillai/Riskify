@@ -2,7 +2,10 @@ import json
 import os
 from flask import Flask, request
 from flask import jsonify
-from modules.risk_analysis import get_risk_for_portfolio
+from modules.risk_analysis import (
+    get_risk_for_portfolio,
+    get_return_for_portfolio,
+)
 
 app = Flask(__name__)
 
@@ -74,6 +77,19 @@ def get_risk_analysis():
     type = body["portfolio"]
     capital = body["capital"]
     return jsonify(get_risk_for_portfolio(capital, type)), 200
+
+
+@app.get("/return")
+def get_return_analysis():
+    body = request.json
+    if "portfolio" not in body or "capital" not in body:
+        return (
+            jsonify({"msg": "Portfolio type or capital must be passed."}),
+            400,
+        )
+    type = body["portfolio"]
+    capital = body["capital"]
+    return jsonify(get_return_for_portfolio(capital, type)), 200
 
 
 app.run(debug=True)

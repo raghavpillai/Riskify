@@ -92,35 +92,9 @@ def get_risk_for_portfolio_helper(capital, portfolio_type):
 
 
 def future_portfolio_values(capital, portfolio_type):
-    if portfolio_type == "ultra_aggressive":
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "ultra_aggressive"), 24
-        )
-    elif portfolio_type == "aggressive":
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "aggressive"), 24
-        )
-    elif portfolio_type == "moderately_aggressive":
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "moderately_aggressive"), 24
-        )
-    elif portfolio_type == "moderate":
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "moderate"), 24
-        )
-    elif portfolio_type == "moderately_conservative":
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "moderately_conservative"),
-            24,
-        )
-    elif portfolio_type == "conservative":
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "conservative"), 24
-        )
-    else:  # ultra_conservative
-        return get_portfolio_value_x_year(
-            get_risk_for_portfolio_helper(capital, "ultra_conservative"), 24
-        )
+    return get_portfolio_value_x_year(
+        get_risk_for_portfolio_helper(capital, portfolio_type)
+    )
 
 
 def get_risk_for_portfolio(capital, portfolio_type):
@@ -131,7 +105,7 @@ def get_risk_for_portfolio(capital, portfolio_type):
     risks = future_portfolio_values(capital, portfolio_type)
     fields = {
         "alpha": 0.05,
-        "portfolios": [{"portfolioValues": [int(risks[i]) for i in risks]}],
+        "portfolios": [{"portfolioValues": risks}],
     }
     print(fields)
     response = requests.post(
@@ -153,20 +127,6 @@ def get_risk_for_portfolio(capital, portfolio_type):
 
 
 def get_portfolio_value_x_year(portfolio):
-    # file = open(os.path.join(os.getcwd(), "new_monte_carlo_wvnq.json"))
-    # data = json.load(file)
-    # # print(data.keys())
-    # new_portfolio = {}
-    # for ticker, value in portfolio.items():
-    #     ticker = ticker.lower()
-    #     ratio_change = (
-    #         data[ticker][str(int(x_years))]["mean_price"]
-    #         / data[ticker]["1"]["mean_price"]
-    #     )
-    #     new_portfolio[ticker] = value * ratio_change
-    # print(new_portfolio)
-    # return new_portfolio
-
     file = open(os.path.join(os.getcwd(), "new_monte_carlo.json"))
     data = json.load(file)
     projected_portfolio_value = [0] * 26
@@ -174,19 +134,22 @@ def get_portfolio_value_x_year(portfolio):
     for ticker, value in portfolio.items():
         ticker = ticker.lower()
 
-        #years 0-25 of the ticker
-        for key in data[ticker]:
-            # print(key)
-            #finding mean_price at that year
-            mean_price = float(data[ticker][key]["mean_price"])
-            #ratio change of this ticker, (future / now)
-            ratio_change = mean_price / float(data[ticker]["0"]["mean_price"])
-            #add this tickers new value to that year of the projected portfolio
-            projected_portfolio_value[int(key)] += value * ratio_change
-    
+        # years 0-25 of the ticker
+        for i in range(0, len(data[ticker])):
+            # finding mean_price at that year
+            mean_price = float(data[ticker][f"{i}"]["mean_price"])
+            # ratio change of this ticker, (future / now)
+            ratio_change = mean_price / float(
+                data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]
+            )
+            # add this tickers new value to that year of the projected portfolio
+            projected_portfolio_value[i] += value * ratio_change
+
     return projected_portfolio_value
 
 
-print(get_portfolio_value_x_year(
-    get_risk_for_portfolio_helper(100_000, "ultra_aggressive")
-))
+print(
+    get_portfolio_value_x_year(
+        get_risk_for_portfolio_helper(100_000, "aggressive")
+    )
+)

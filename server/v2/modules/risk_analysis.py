@@ -195,6 +195,7 @@ def get_portfolio_value_x_year(portfolio):
             # finding mean_price at that year
             mean_price = round(float(data[ticker][f"{i}"]["mean_price"]), 2)
             # ratio change of this ticker, (future / now)
+
             ratio_change = mean_price / round(
                 float(data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]),
                 2,
@@ -202,7 +203,9 @@ def get_portfolio_value_x_year(portfolio):
             # add this tickers new value to that year of the projected portfolio
             ind_graphs[ticker].append(round(value * ratio_change, 2))
             projected_portfolio_value[i] += round(value * ratio_change, 2)
+        ind_graphs[ticker].pop(1)
     file.close()
+    projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 

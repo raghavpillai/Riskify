@@ -14,6 +14,7 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
+
 def process_file(file_name):
     values = []
     file = open(file_name)
@@ -96,7 +97,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             "VGSH": capital * 0.4,
             "VTIP": capital * 0.2,
         }
-    else: # Custom payload 
+    else:  # Custom payload
         categories = {}
         for stock in ticker_categories["stocks"]:
             print(payload)
@@ -107,7 +108,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
             categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
         for stock in ticker_categories["treasury"]["notes"]:
             categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
-        #categories["capital"] = (payload["capitalWeight"] * 0.01) * capital
+        # categories["capital"] = (payload["capitalWeight"] * 0.01) * capital
         for stock in ticker_categories["real_estate"]:
             categories[stock] = (payload["realEstate"] * 0.01) * capital
         for stock in ticker_categories["gold"]:
@@ -203,21 +204,23 @@ def get_portfolio_value_x_year(portfolio):
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 
-def return_analyzed_data(capital, portfolio_type, payload=None):
+def return_analyzed_data(capital, portfolio_type, payload):
     balances = {}
-    if portfolio_type == "true":
-        capital_funds = (capital * payload["capitalWeight"] * 0.01)/4
-        balances["stocks"] = (capital * 0.25) - (capital * payload["stocks"] * 0.01) - capital_funds
-        balances["bonds_and_notes"] = (capital * 0.25) - (capital * payload["bonds_and_notes"] * 0.01) - capital_funds
-        balances["realEstate"] = (capital * 0.25) - (capital * payload["realEstate"] * 0.01) - capital_funds
-        balances["commodities"] = (capital * 0.25) - (capital * payload["commodities"] * 0.01) - capital_funds
+    capital_funds = capital * (payload["capitalWeight"] * 0.01)
+    balances["stocks"] = capital_funds * (payload["stocks"] * 0.01)
+    balances["bonds_and_notes"] = capital_funds * (
+        payload["bonds_and_notes"] * 0.01
+    )
+    balances["realEstate"] = capital_funds * (payload["realEstate"] * 0.01)
+    balances["commodities"] = capital_funds * (payload["commodities"] * 0.01)
     return {
         "risk": get_risk_for_portfolio(capital, portfolio_type, payload),
         "future_points": get_portfolio_value_x_year(
             get_risk_for_portfolio_helper(capital, portfolio_type, payload)
         ),
-        "balancing": balances
+        "balancing": balances,
     }
+
 
 # print(
 #     get_portfolio_value_x_year(

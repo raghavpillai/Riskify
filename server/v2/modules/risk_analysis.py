@@ -152,7 +152,7 @@ def get_risk_for_portfolio(capital, portfolio_type):
     return {portfolio_type: risk}
 
 
-def get_portfolio_value_x_year(portfolio, x_years):
+def get_portfolio_value_x_year(portfolio):
     # file = open(os.path.join(os.getcwd(), "new_monte_carlo_wvnq.json"))
     # data = json.load(file)
     # # print(data.keys())
@@ -167,25 +167,26 @@ def get_portfolio_value_x_year(portfolio, x_years):
     # print(new_portfolio)
     # return new_portfolio
 
-    file = open(os.path.join(os.getcwd(), "new_monte_carlo_wvnq.json"))
+    file = open(os.path.join(os.getcwd(), "new_monte_carlo.json"))
     data = json.load(file)
-    new_portfolio = [0 * len(portfolio.items())]
+    projected_portfolio_value = [0] * 26
+
     for ticker, value in portfolio.items():
         ticker = ticker.lower()
+
+        #years 0-25 of the ticker
         for key in data[ticker]:
-            mean_price = key["mean_price"]
-            new_portfolio[ticker] += mean_price
-    print(new_portfolio)
-    return new_portfolio
+            # print(key)
+            #finding mean_price at that year
+            mean_price = float(data[ticker][key]["mean_price"])
+            #ratio change of this ticker, (future / now)
+            ratio_change = mean_price / float(data[ticker]["0"]["mean_price"])
+            #add this tickers new value to that year of the projected portfolio
+            projected_portfolio_value[int(key)] += value * ratio_change
+    
+    return projected_portfolio_value
 
 
-# get_risk_for_portfolio(100_000, "ultra_aggressive")
-# get_risk_for_portfolio(100_000, "aggressive")
-# get_risk_for_portfolio(100_000, "moderately_aggressive")
-# get_risk_for_portfolio(100_000, "moderate")
-# get_risk_for_portfolio(100_000, "moderately_conservative")
-# get_risk_for_portfolio(100_000, "conservative")
-# get_risk_for_portfolio(100_000, "ultra_conservative")
-get_portfolio_value_x_year(
-    get_risk_for_portfolio_helper(100_000, "ultra_aggressive"), 24
-)
+print(get_portfolio_value_x_year(
+    get_risk_for_portfolio_helper(100_000, "ultra_aggressive")
+))

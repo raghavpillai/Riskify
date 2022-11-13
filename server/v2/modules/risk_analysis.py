@@ -152,6 +152,7 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
 
 
 def get_return_for_portfolio(capital, portfolio_type):
+
     if db.get(f"{portfolio_type}_{capital}_return"):
         print("CACHE ACCESSED FOR RETURN_PORTFOLIO")
         return db[f"{portfolio_type}_{capital}_return"]

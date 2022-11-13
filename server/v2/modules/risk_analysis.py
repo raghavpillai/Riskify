@@ -15,6 +15,91 @@ ticker_categories = {
     "treasury": {"bonds": ["SCHP", "VGLT"], "notes": ["VGIT", "VGSH", "VTIP"]},
 }
 
+top_10_portfolio_type = {
+    "ultra_aggressive" : [
+        "apple",
+        "microsoft",
+        "amazon",
+        "us dollar",
+        "taiwan semiconductor manufacturing",
+        "tencent",
+        "first horizon corporation",
+        "tesla",
+        "vanguard",
+        "american tower corporation"
+    ],
+    "agressive" : [
+        "apple",
+        "microsoft",
+        "us dollar",
+        "tencent",
+        "first horizon corporation",
+        "south jersey industries",
+        "vanguard",
+        "american tower corporation",
+        "treasury bond",
+        "prologis inc"
+    ],
+    "moderately_aggressive" : [
+        "apple",
+        "microsoft",
+        "alibaba",
+        "tencent",
+        "alleghany corporation",
+        "south jersey industries",
+        "vanguard",
+        "american tower corporation",
+        "treasury bond",
+        "prologis inc"
+    ],
+    "moderate" : [
+        "taiwan semiconductor manufacturing",
+        "microsoft",
+        "us dollar",
+        "tencent",
+        "first horizon corporation",
+        "south jersey industries",
+        "vanguard",
+        "american tower corporation",
+        "treasury bond",
+        "treasury note"
+    ],
+    "moderately_conservative" : [
+        "apple",
+        "microsoft",
+        "us dollar",
+        "tencent",
+        "first horizon corporation",
+        "south jersey industries",
+        "vanguard",
+        "american tower corporation",
+        "treasury bond",
+        "treasury note"
+    ],
+    "conservative" : [
+        "apple",
+        "microsoft",
+        "us dollar",
+        "crown castle inc",
+        "government of the united states of america",
+        "south jersey industries",
+        "vanguard",
+        "american tower corporation",
+        "treasury bond",
+        "treasury note"
+    ],
+    "ultra_conservative" : [
+        "amazon",
+        "alphabet",
+        "us dollar",
+        "crown castle inc",
+        "government of the united states of america",
+        "vanguard",
+        "american tower corporation",
+        "treasury bond",
+        "treasury note"
+    ]
+}
 
 def process_file(file_name):
     values = []

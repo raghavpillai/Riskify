@@ -152,6 +152,7 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
 
 
 def get_return_for_portfolio(capital, portfolio_type):
+    
     if db.get(f"{portfolio_type}_{capital}_return"):
         print("CACHE ACCESSED FOR RETURN_PORTFOLIO")
         return db[f"{portfolio_type}_{capital}_return"]
@@ -196,7 +197,7 @@ def get_portfolio_value_x_year(portfolio):
             # ratio change of this ticker, (future / now)
             ratio_change = mean_price / round(float(
                 data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]
-            ), 2)
+            ) + 0.05
             # add this tickers new value to that year of the projected portfolio
             ind_graphs[ticker].append(round(value * ratio_change, 2))
             projected_portfolio_value[i] += round(value * ratio_change, 2)

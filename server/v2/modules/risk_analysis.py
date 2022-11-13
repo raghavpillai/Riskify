@@ -2,6 +2,7 @@ import json
 import requests
 import os
 from sqlitedict import SqliteDict
+from modules.model import get_points
 
 db = SqliteDict("risk_analysis.sqlite")
 
@@ -100,10 +101,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
     else:  # Custom payload
         categories = {}
         for stock in ticker_categories["stocks"]:
-            print(payload)
-            print(payload["stocks"])
             categories[stock] = (payload["stocks"] * 0.01) * capital
-            print(categories[stock])
         for stock in ticker_categories["treasury"]["bonds"]:
             categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
         for stock in ticker_categories["treasury"]["notes"]:
@@ -205,6 +203,8 @@ def get_portfolio_value_x_year(portfolio):
             projected_portfolio_value[i] += round(value * ratio_change, 2)
         ind_graphs[ticker].pop(1)
     file.close()
+    points = get_points(projected_portfolio_value)
+    print(points)
     projected_portfolio_value.pop(1)
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 

@@ -160,9 +160,10 @@ def get_portfolio_value_x_year(portfolio):
     data = json.load(file)
     projected_portfolio_value = [0] * 26
 
+    ind_graphs = {}
     for ticker, value in portfolio.items():
         ticker = ticker.lower()
-
+        ind_graphs[ticker] = []
         # years 0-25 of the ticker
         for i in range(0, len(data[ticker])):
             # finding mean_price at that year
@@ -172,11 +173,19 @@ def get_portfolio_value_x_year(portfolio):
                 data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]
             )
             # add this tickers new value to that year of the projected portfolio
+            ind_graphs[ticker].append(value * ratio_change)
             projected_portfolio_value[i] += value * ratio_change
-
     file.close()
-    return projected_portfolio_value
+    return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
+
+def return_analyzed_data(capital, portfolio_type):
+    return {
+        "risk": get_risk_for_portfolio(capital, portfolio_type),
+        "future_points": get_portfolio_value_x_year(
+            get_risk_for_portfolio_helper(capital, portfolio_type)
+        )
+    }
 
 # print(
 #     get_portfolio_value_x_year(

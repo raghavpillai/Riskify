@@ -3,7 +3,7 @@ import os
 from flask import Flask, request
 from flask import jsonify
 from modules.risk_analysis import (
-    get_risk_for_portfolio,
+    return_analyzed_data,
     get_return_for_portfolio,
 )
 
@@ -66,17 +66,24 @@ def get_prediction_data():
         return jsonify(predictions_data[ticker]), 200
 
 
-@app.get("/risk")
+@app.get("/analytics")
 def get_risk_analysis():
     body = request.json
-    if "portfolio" not in body or "capital" not in body:
+    if "portfolio" not in body or "data" not in body:
         return (
-            jsonify({"msg": "Portfolio type or capital must be passed."}),
+            jsonify({"msg": "Portfolio type or data must be passed."}),
             400,
         )
-    type = body["portfolio"]
-    capital = body["capital"]
-    return jsonify(get_risk_for_portfolio(capital, type)), 200
+    has_portfolio = body["portfolio"]
+    capital = body["data"]["capital"]
+    portfolio_type = body["data"]["balance"]
+
+    if has_portfolio == "false":
+        data = return_analyzed_data(capital, portfolio_type)
+        return jsonify(data), 200
+    else:
+        pass
+    
 
 
 @app.get("/return")

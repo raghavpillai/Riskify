@@ -24,7 +24,7 @@ function Onboarding01() {
     localStorage.setItem('obj', JSON.stringify(obj))
     router.push('/dashboard')
   }
-    
+
   return (
     <>
     <Navbar />

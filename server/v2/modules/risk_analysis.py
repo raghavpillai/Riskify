@@ -1,10 +1,11 @@
 import json
 import requests
-from threading import Thread
 import os
 from sqlitedict import SqliteDict
 
 db = SqliteDict("risk_analysis.sqlite")
+
+file_dir = os.path.dirname(os.path.realpath("__file__"))
 
 
 def process_file(file_name):
@@ -107,7 +108,6 @@ def get_risk_for_portfolio(capital, portfolio_type):
         "alpha": 0.05,
         "portfolios": [{"portfolioValues": risks}],
     }
-    print(fields)
     response = requests.post(
         "https://api.portfoliooptimizer.io/v1/portfolio/analysis/conditional-value-at-risk",
         json=fields,
@@ -127,7 +127,7 @@ def get_risk_for_portfolio(capital, portfolio_type):
 
 
 def get_portfolio_value_x_year(portfolio):
-    file = open(os.path.join(os.getcwd(), "new_monte_carlo.json"))
+    file = open(os.path.join(file_dir, f"new_monte_carlo.json"))
     data = json.load(file)
     projected_portfolio_value = [0] * 26
 
@@ -145,11 +145,12 @@ def get_portfolio_value_x_year(portfolio):
             # add this tickers new value to that year of the projected portfolio
             projected_portfolio_value[i] += value * ratio_change
 
+    file.close()
     return projected_portfolio_value
 
 
-print(
-    get_portfolio_value_x_year(
-        get_risk_for_portfolio_helper(100_000, "aggressive")
-    )
-)
+# print(
+#     get_portfolio_value_x_year(
+#         get_risk_for_portfolio_helper(100_000, "aggressive")
+#     )
+# )

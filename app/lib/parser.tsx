@@ -15,6 +15,8 @@ export function graphParser(response_data) {
     res.push([tickers[i], tickers[i + 1]]);
   }
 
+  console.log(response_data.risk)
+
   return [
     res,
     response_data.balancing,

@@ -75,7 +75,7 @@ function Onboarding01() {
                   <div className="space-y-3 mb-8">
                     <label className="block text-sm font-medium mb-1" htmlFor="company-name">Risk Tolerance<span className="text-rose-500">*</span></label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="ultraAggressive"/>
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="ultra_aggressive"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Ultra Aggressive</span>
                       </div>
@@ -89,7 +89,7 @@ function Onboarding01() {
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="modAggressive"/>
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="moderately_aggressive"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Moderately Aggressive</span>
                       </div>
@@ -103,21 +103,21 @@ function Onboarding01() {
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="modCons"/>
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="moderately_conservative"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Moderately Conservative</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="cons"/>
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="conservative"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Conservative</span>
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent peer-checked:border-[#1ddcdc] rounded pointer-events-none" aria-hidden="true"></div>
                     </label>
                     <label className="relative block cursor-pointer">
-                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="ultraCons"/>
+                      <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked id="ultra_conservative"/>
                       <div className="flex items-center bg-white text-sm font-medium text-slate-800 p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                         <span>Ultra Conservative</span>
                       </div>

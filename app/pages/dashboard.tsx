@@ -7,12 +7,11 @@ import Navbar from "../components/Navbar";
 import FintechIntro from "../components/partials/FintechIntro";
 import FintechCard01 from "../components/partials/FintechCard01";
 import FintechCard05 from "../components/partials/FintechCard05";
-import FintechCard07 from "../components/partials/FintechCard07";
 import FintechCard10 from "../components/partials/FintechCard10";
 
-import { ticker1, ticker2, ticker3, ticker4 } from "../lib/exports";
-
 export default function Dashboard() {
+  const url = "http://843e-129-110-241-55.ngrok.io"
+
   const [data, setData] = useState<
     (
       | (string | number[])[]
@@ -36,19 +35,20 @@ export default function Dashboard() {
       router.push("/");
     }
 
-    fetch(`http://127.0.0.1:5000/analytics`, {
+    fetch(`${url}/analytics`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: obj,
     })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        setData(graphParser(res));
-      });
-    fetch(`http://127.0.0.1:5000/top-holdings`, {
+    .then((res) => res.json())
+    .then((res) => {
+      setData(graphParser(res));
+    }).catch((error) =>{
+      console.log(error)
+    })
+    fetch(`${url}/top-holdings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export default function Dashboard() {
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        setData(topTickerParser(res));
+        setTop(topTickerParser(res));
       });
   }, []);
 
@@ -91,11 +91,7 @@ export default function Dashboard() {
                       JSON.parse(localStorage.getItem("obj") || "{}")["balance"]
                     }
                     rating={
-                      data[2][
-                        JSON.parse(localStorage.getItem("obj") || "{}")[
-                          "balance"
-                        ]
-                      ]
+                      data[2][JSON.parse(localStorage.getItem("obj") || "{}")["balance"]]
                     }
                   />
 

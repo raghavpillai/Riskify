@@ -10,7 +10,7 @@ function FintechIntro({ strategy, rating }) {
     if(value <= 33){
       return(
         <div className="self-center text-xl text-black font-bold">
-          The Overall Risk Rating is <span className='font-bold self-center text-xl text-[#eb4034]'>{value}</span>%
+          In The Overall Risk Rating is <span className='font-bold self-center text-xl text-[#56eb34]'>{value}</span>%
         </div>
       )
     }
@@ -24,7 +24,7 @@ function FintechIntro({ strategy, rating }) {
     else {
       return(
         <div className="self-center text-xl h-5 text-black font-bold">
-          The Overall Risk Rating is <span className='font-bold self-center text-xl text-[#56eb34]'>{value}</span>%
+          The Overall Risk Rating is <span className='font-bold self-center text-xl text-[#eb4034]'>{value}</span>%
         </div>
       )
     }

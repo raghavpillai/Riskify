@@ -19,7 +19,6 @@ def get_risk_from_data(folder_name):
 
     risks = 0
     for table in tot_values:
-        headers = {"Content-type": "application/json"}
         fields = {
             "alpha": 0.05,
             "portfolios": [
@@ -37,7 +36,7 @@ def get_risk_from_data(folder_name):
             risk = 0.026584279145694695
         risks += risk
     
-    return risks
+    return (risks/len(tot_values))
 
 risks = get_risk_from_data("market")
 print(risks)

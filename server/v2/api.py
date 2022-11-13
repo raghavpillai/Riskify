@@ -2,7 +2,7 @@ import json
 import os
 from flask import Flask, request
 from flask import jsonify
-from modules.monte_carlo_script import get_monte_carlo_preds
+from modules.risk_analysis import get_risk_for_portfolio
 
 app = Flask(__name__)
 
@@ -61,6 +61,19 @@ def get_prediction_data():
     with open(data_file, "r") as f:
         predictions_data = json.load(f)
         return jsonify(predictions_data[ticker]), 200
+
+
+@app.get("/risk")
+def get_risk_analysis():
+    body = request.json
+    if "portfolio" not in body or "capital" not in body:
+        return (
+            jsonify({"msg": "Portfolio type or capital must be passed."}),
+            400,
+        )
+    type = body["portfolio"]
+    capital = body["capital"]
+    return jsonify(get_risk_for_portfolio(capital, type)), 200
 
 
 app.run(debug=True)

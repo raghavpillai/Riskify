@@ -101,10 +101,7 @@ def get_risk_for_portfolio_helper(capital, portfolio_type, payload=None):
     else:  # Custom payload
         categories = {}
         for stock in ticker_categories["stocks"]:
-            print(payload)
-            print(payload["stocks"])
             categories[stock] = (payload["stocks"] * 0.01) * capital
-            print(categories[stock])
         for stock in ticker_categories["treasury"]["bonds"]:
             categories[stock] = (payload["bonds_and_notes"] * 0.01) * capital
         for stock in ticker_categories["treasury"]["notes"]:

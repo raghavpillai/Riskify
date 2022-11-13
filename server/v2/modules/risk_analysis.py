@@ -2,8 +2,8 @@ import json
 import requests
 from threading import Thread
 import os
-
-risks = {}
+from sqlitedict import SqliteDict
+db = SqliteDict("risk_analysis.sqlite")
 
 
 def process_file(file_name):
@@ -17,7 +17,11 @@ def process_file(file_name):
 
 
 def get_risk_from_data(folder_name):
-    goal_dir = os.path.join(os.getcwd(), f"data/{folder_name}/")
+    if db.get(folder_name):
+        print("ACCESSED")
+        return db[folder_name]
+
+    goal_dir = os.path.join(os.getcwd(), f"data_new/{folder_name}/")
 
     tot_values = []
     for filename in os.listdir(goal_dir):
@@ -49,7 +53,8 @@ def get_risk_from_data(folder_name):
         risks += risk
 
     avg_risk = risks / len(tot_values)
-    risks[folder_name] = avg_risk
+    db[folder_name] = avg_risk
+    db.commit()
 
     return avg_risk
 

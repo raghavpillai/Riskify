@@ -7,8 +7,7 @@ from modules.monte_carlo_script import get_monte_carlo_preds
 app = Flask(__name__)
 
 historical_data = {}
-predictions_data = get_monte_carlo_preds()
-print(predictions_data)
+predictions_data_cache = {}
 ticker_categories = {
     "gold": ["SGOL"],
     "real_estate": ["VNQ"],
@@ -50,16 +49,18 @@ def get_historical_data():
 
 @app.get("/prediction")
 def get_prediction_data():
-    print(predictions_data)
     body = request.json
     if "ticker" not in body:
         return jsonify({"msg": "Ticker must be passed."}), 400
 
     ticker = body["ticker"].lower()
-    if ticker not in predictions_data:
-        return jsonify({"msg": "Ticker not found."}), 400
+    if predictions_data_cache and ticker in predictions_data_cache:
+        return jsonify(predictions_data_cache[ticker]), 200
 
-    return jsonify(predictions_data[ticker]), 200
+    data_file = os.path.join(file_dir, f"../../data/new_monte_carlo.json")
+    with open(data_file, "r") as f:
+        predictions_data = json.load(f)
+        return jsonify(predictions_data[ticker]), 200
 
 
 app.run(debug=True)

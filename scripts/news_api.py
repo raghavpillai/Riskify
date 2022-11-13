@@ -1,20 +1,29 @@
 import json
 import requests
 import yfinance as yf
+import random
+import math
 
-        
-msft = yf.Ticker("MSFT")
-print(msft.news)
+def get_news_articles(holdings_arr):
+    if len(holdings_arr) > 10:
+        holdings_arr = holdings_arr[:10]
+    
+    ret = []
+    ticker_arr = [yf.Ticker(ticker).news for ticker in holdings_arr]
+    ticker_arr.sort(key=lambda x: len(x))
+    length = int(10 / len(holdings_arr))
 
-"""
-fields = {
-    "apiKey" : "da505f54ccb84881b5bbd7c9839c0a47",
-    "country" : "us",
-    "category" : "business",
-    "q" : "HORIZON CORPORATION"
-}
-response = requests.get('https://newsapi.org/v2/top-headlines', params=fields)
+    for ticker in ticker_arr:
+        ret.extend(ticker[0:min(len(ticker), length)])
 
-print("Status Code", response.status_code)
-print("JSON Response ", response.json())
-"""
+    i = len(ticker_arr) - 1
+    while i >= 0 and len(ret) < 10:
+        if(len(ticker) < length):
+            continue
+        ret.extend(ticker[length:])
+
+    random.shuffle(ret)
+
+    return ret[0:min(10,len(ret))]
+
+print(json.dumps(get_news_articles(['voo', 'vea', 'apple'])))

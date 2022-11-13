@@ -116,7 +116,7 @@ export default function Home() {
           />
         </div>
         <div id="about"></div>
-        <div className='w-screen text-center text-[#777777] font-semibold'>Riskify 2022</div>
+        <div className='w-screen h-[100%] text-center text-[#777777] font-semibold'>Riskify 2022</div>
       </div>
       
       

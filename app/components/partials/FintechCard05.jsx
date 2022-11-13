@@ -38,7 +38,7 @@ function FintechCard05({data}) {
                       </div>
                     </td>
                     <td className="p-2 whitespace-nowrap">
-                      <div className="font-medium text-slate-800 text-right">{key[1]}</div>
+                      <div className="font-medium text-slate-800 text-right">{parseFloat(key[1])*100}%</div>
                     </td>
                   </tr>
                 )

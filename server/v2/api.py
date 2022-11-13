@@ -72,13 +72,16 @@ def get_risk_analysis():
     has_portfolio = body["portfolio"]
     capital = body["data"]["capital"]
     portfolio_type = body["data"]["balance"]
-    if has_portfolio:
-        data = return_analyzed_data(capital, portfolio_type, body["data"])
+    if has_portfolio == "true":
+        data = return_analyzed_data(
+            capital, has_portfolio, "custom", body["data"]
+        )
         return jsonify(data), 200
     else:
-        type = body["data"]["balance"]
-        capital = body["data"]["capital"]
-        return jsonify(get_risk_for_portfolio(capital, type)), 200
+        return (
+            jsonify(return_analyzed_data(capital, "false", portfolio_type)),
+            200,
+        )
 
 
 @app.get("/return")

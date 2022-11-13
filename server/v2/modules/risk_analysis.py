@@ -194,9 +194,10 @@ def get_portfolio_value_x_year(portfolio):
             # finding mean_price at that year
             mean_price = round(float(data[ticker][f"{i}"]["mean_price"]), 2)
             # ratio change of this ticker, (future / now)
-            ratio_change = mean_price / round(float(
-                data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]
-            ), 2)
+            ratio_change = mean_price / round(
+                float(data[ticker][f"{i - 1 if i > 0 else i}"]["mean_price"]),
+                2,
+            )
             # add this tickers new value to that year of the projected portfolio
             ind_graphs[ticker].append(round(value * ratio_change, 2))
             projected_portfolio_value[i] += round(value * ratio_change, 2)
@@ -204,15 +205,19 @@ def get_portfolio_value_x_year(portfolio):
     return {"total_graph": projected_portfolio_value, "ind_graphs": ind_graphs}
 
 
-def return_analyzed_data(capital, portfolio_type, payload):
+def return_analyzed_data(capital, has_portfolio, portfolio_type, payload=None):
     balances = {}
-    capital_funds = capital * (payload["capitalWeight"] * 0.01)
-    balances["stocks"] = capital_funds * (payload["stocks"] * 0.01)
-    balances["bonds_and_notes"] = capital_funds * (
-        payload["bonds_and_notes"] * 0.01
-    )
-    balances["realEstate"] = capital_funds * (payload["realEstate"] * 0.01)
-    balances["commodities"] = capital_funds * (payload["commodities"] * 0.01)
+    if has_portfolio == "true":
+        balances = payload["balances"]
+        capital_funds = capital * (payload["capitalWeight"] * 0.01)
+        balances["stocks"] = capital_funds * (payload["stocks"] * 0.01)
+        balances["bonds_and_notes"] = capital_funds * (
+            payload["bonds_and_notes"] * 0.01
+        )
+        balances["realEstate"] = capital_funds * (payload["realEstate"] * 0.01)
+        balances["commodities"] = capital_funds * (
+            payload["commodities"] * 0.01
+        )
     return {
         "risk": get_risk_for_portfolio(capital, portfolio_type, payload),
         "future_points": get_portfolio_value_x_year(

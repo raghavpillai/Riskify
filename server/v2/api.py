@@ -6,6 +6,7 @@ from flask import jsonify
 app = Flask(__name__)
 
 historical_data = {}
+predictions_data = {}
 ticker_categories = {
     "gold": ["SGOL"],
     "real_estate": ["VNQ"],
@@ -21,10 +22,16 @@ def index():
     return jsonify({"msg": "Hello World"})
 
 
-@app.get("/historical/<string:category>/<string:ticker>")
-def get_historical_data(category, ticker):
+@app.get("/historical")
+def get_historical_data():
+    body = request.json
+    if "category" not in body or "ticker" not in body:
+        return jsonify({"msg": "Category and ticker must be passed."}), 400
+
+    category = body["category"]
     if category not in ticker_categories:
         return jsonify({"msg": "Invalid category passed."}), 400
+    ticker = body["ticker"]
     if ticker in historical_data:
         return jsonify(historical_data[ticker]), 200
 
@@ -37,6 +44,23 @@ def get_historical_data(category, ticker):
     with open(data_file, "r") as f:
         historical_data[ticker] = json.load(f)
         return jsonify(historical_data[ticker]), 200
+
+
+@app.get("/prediction")
+def get_prediction_data():
+    body = request.json
+    if "ticker" not in body:
+        return jsonify({"msg": "Ticker must be passed."}), 400
+
+    ticker = body["ticker"].lower()
+    if ticker in predictions_data:
+        return jsonify(predictions_data[ticker]), 200
+
+    data_file = os.path.join(file_dir, f"../../data_vars_monte_carlo.json")
+    with open(data_file, "r") as f:
+        data = json.load(f)
+        predictions_data[ticker] = data[ticker]
+        return jsonify(predictions_data[ticker]), 200
 
 
 app.run(debug=True)

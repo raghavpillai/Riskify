@@ -22,6 +22,12 @@ export function graphParser(response_data) {
     response_data.balancing,
     response_data.risk,
     ["Total Graph", response_data.future_points.total_graph],
+    [
+      response_data.articles[Math.ceil(response_data.articles.length*Math.random())],
+      response_data.articles[Math.ceil(response_data.articles.length*Math.random())],
+      response_data.articles[Math.ceil(response_data.articles.length*Math.random())],
+      response_data.articles[Math.ceil(response_data.articles.length*Math.random())],
+    ]
   ];
 }
 

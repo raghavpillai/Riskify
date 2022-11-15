@@ -75,7 +75,7 @@ def get_risk_analysis():
             400,
         )
     has_portfolio = body["portfolio"]
-    capital = int(body["data"]["capitalWeight"])
+    capital = int(body["data"]["capitalValue"])
     portfolio_type = body["balance"]
     if has_portfolio == "true":
         data = return_analyzed_data(

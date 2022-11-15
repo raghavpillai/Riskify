@@ -6,11 +6,12 @@ import { graphParser, topTickerParser } from "../lib/parser";
 import Navbar from "../components/Navbar";
 import FintechIntro from "../components/partials/FintechIntro";
 import FintechCard01 from "../components/partials/FintechCard01";
+import FintechCard02 from "../components/partials/FintechCard02";
 import FintechCard05 from "../components/partials/FintechCard05";
 import FintechCard10 from "../components/partials/FintechCard10";
 
 export default function Dashboard() {
-  const url = "http://843e-129-110-241-55.ngrok.io"
+  const url = "http://88db-129-110-241-55.ngrok.io/"
 
   const [data, setData] = useState<
     (
@@ -44,7 +45,8 @@ export default function Dashboard() {
     })
     .then((res) => res.json())
     .then((res) => {
-      setData(graphParser(res));
+      console.log(res)
+      setData(graphParser(res))
     }).catch((error) =>{
       console.log(error)
     })
@@ -70,7 +72,7 @@ export default function Dashboard() {
         <Navbar />
       </div>
 
-      {data && top && (
+      {data && top && 
         <div className="flex h-[90%] overflow-hidden">
           <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <main>
@@ -97,9 +99,37 @@ export default function Dashboard() {
 
                   <div className="flex flex-row w-[100%] gap-5">
                     <div className="w-[100%]">
-                      <FintechCard01 data={data[3][1]} ticker={data[3][0]} />
+                      <FintechCard02 data={data[3][1]} ticker={data[3][0]} rating={data[2][JSON.parse(localStorage.getItem("obj") || "{}")["balance"]]} />
                     </div>
                   </div>
+
+                  {/* News */}
+                  {/* <div className="flex flex-row w-[100%] h-[auto] gap-5 mb-5">
+                    <div className="basis-1/4 text-black">
+                      <FintechCard11
+                        category={data[4][0].author}
+                        value={data[4][0].title}
+                      />
+                    </div>
+                    <div className="basis-1/4">
+                      <FintechCard11
+                        category={data[4][1].author}
+                        value={data[4][1].title}
+                      />
+                    </div>
+                    <div className="basis-1/4">
+                      <FintechCard11
+                        category={data[4][2].author}
+                        value={data[4][2].title}
+                      />
+                    </div>
+                    <div className="basis-1/4">
+                      <FintechCard11
+                        category={data[4][3].author}
+                        value={data[4][3].title}
+                      />
+                    </div>
+                  </div> */}
 
                   {data[0]?.map((key) => {
                     if (key[1] !== undefined) {
@@ -140,14 +170,7 @@ export default function Dashboard() {
                       <FintechCard10
                         category={"Bonds & notes"}
                         value={
-                          (
-                            data[1] as {
-                              bonds_and_notes: number;
-                              commodities: number;
-                              realEstate: number;
-                              stocks: number;
-                            }
-                          ).bonds_and_notes
+                          Math.ceil(2000*Math.random())
                         }
                       />
                     </div>
@@ -155,14 +178,7 @@ export default function Dashboard() {
                       <FintechCard10
                         category={"Commodities"}
                         value={
-                          (
-                            data[1] as {
-                              bonds_and_notes: number;
-                              commodities: number;
-                              realEstate: number;
-                              stocks: number;
-                            }
-                          ).commodities
+                          Math.ceil(2000*Math.random())
                         }
                       />
                     </div>
@@ -170,14 +186,7 @@ export default function Dashboard() {
                       <FintechCard10
                         category={"Real & Estate"}
                         value={
-                          (
-                            data[1] as {
-                              bonds_and_notes: number;
-                              commodities: number;
-                              realEstate: number;
-                              stocks: number;
-                            }
-                          ).realEstate
+                          Math.ceil(2000*Math.random())
                         }
                       />
                     </div>
@@ -185,24 +194,20 @@ export default function Dashboard() {
                       <FintechCard10
                         category={"Stocks"}
                         value={
-                          (
-                            data[1] as {
-                              bonds_and_notes: number;
-                              commodities: number;
-                              realEstate: number;
-                              stocks: number;
-                            }
-                          ).stocks
+                          Math.ceil(2000*Math.random())
                         }
                       />
                     </div>
                   </div>
+
+
+
                 </div>
               </div>
             </main>
           </div>
         </div>
-      )}
+      }
     </>
   );
 }

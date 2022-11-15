@@ -84,7 +84,7 @@ export default function Home() {
             data={
               {
                 title:"What do we do?",
-                data: "We take care of find the the risk rating of your portfolio, so that you" +
+                data: "We take care of find the the risk rating of your portfolio, so that you " +
                 "can manage your money and assets wisely"
               }} 
           />
@@ -92,7 +92,7 @@ export default function Home() {
             data={
               {
                 title:"Who is this for?",
-                data: "Investors everywhere in the United States of America benefit from"+ 
+                data: "Investors everywhere in the United States of America benefit from "+ 
                 "the metrics calculated through this application to grow their portfolios"
               }} 
           />
@@ -102,16 +102,9 @@ export default function Home() {
             data={
               {
                 title:"Why is this important?",
-                data: "As a group we believe that managing assets and money is not only a way to create wealth," +
-                "but also a way to create opportunities and open many doors. Good financial health is an important"+
+                data: "As a group we believe that managing assets and money is not only a way to create wealth, " +
+                "but also a way to create opportunities and open many doors. Good financial health is an important "+
                 "part of life which is often neglected. We aim to solve this."
-              }} 
-          />
-          <Card className={'basis-1/2 h-[100%]'} 
-            data={
-              {
-                title:"Credits",
-                data: "Kanish Garg - Backend, Raghav Pillai - Backend, Rishabh Vemparala - Frontend, Ryan Donaldson - Backend"
               }} 
           />
         </div>

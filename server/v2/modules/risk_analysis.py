@@ -230,6 +230,16 @@ def get_risk_for_portfolio(capital, portfolio_type, payload=None):
 
     #db[f"{portfolio_type}_{capital}"] = {portfolio_type: risk}
     #db.commit()
+    obj = { # use if no api access
+        "ultra_aggressive": 0.7,
+        "aggressive": 0.61,
+        "moderately_aggressive": 0.55,
+        "moderate": 0.4,
+        "moderately_conservative": 0.325,
+        "conservative": 0.1,
+        "ultra_conservative": 0.05,
+        "custom": 0.225,
+    }
     
     score = risk
     return {portfolio_type: score}
